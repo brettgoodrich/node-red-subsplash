@@ -1,0 +1,56 @@
+{
+  "name": "node-red-contrib-subsplash",
+  "version": "0.1.0",
+  "description": "Node-RED nodes for the entire Subsplash REST API: media, people, giving, events, groups, forms, payments, push, tokens, builder, and webhooks.",
+  "license": "Apache-2.0",
+  "keywords": [
+    "node-red",
+    "subsplash",
+    "church",
+    "media",
+    "giving",
+    "donations",
+    "webhooks"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "node-red": {
+    "version": ">=3.0.0",
+    "nodes": {
+      "subsplash": "nodes/subsplash.js"
+    }
+  },
+  "scripts": {
+    "generate": "python3 scripts/generate_catalog.py",
+    "lint": "eslint lib nodes test",
+    "test": "node --test --test-concurrency=1 test/*.test.js"
+  },
+  "files": [
+    "lib/",
+    "nodes/",
+    "examples/",
+    "scripts/generate_catalog.py",
+    "scripts/fragments/",
+    "CHANGELOG.md",
+    "PUBLISHING.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/REPLACE_WITH_YOUR_GITHUB_USER/node-red-contrib-subsplash.git"
+  },
+  "homepage": "https://github.com/REPLACE_WITH_YOUR_GITHUB_USER/node-red-contrib-subsplash#readme",
+  "bugs": {
+    "url": "https://github.com/REPLACE_WITH_YOUR_GITHUB_USER/node-red-contrib-subsplash/issues"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "nock": "^13.5.6",
+    "node-red": "^4.1.0",
+    "node-red-node-test-helper": "^0.3.4"
+  }
+}

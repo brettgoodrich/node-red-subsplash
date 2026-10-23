@@ -1,0 +1,107 @@
+[
+    {
+        "id": "tab-donations",
+        "type": "tab",
+        "label": "Export donations",
+        "disabled": false,
+        "info": "Walks every page of donations for an organization. Replace YOUR_ORG_KEY with the 8 character org key. GetAllDonations documents filter[org_key], so a config-node org key is copied in when the message does not set one. The OpenAPI operation does not mark that filter required."
+    },
+    {
+        "id": "cfg-donations",
+        "type": "subsplash-config",
+        "name": "Subsplash",
+        "baseUrl": "https://core.subsplash.com",
+        "appKey": "",
+        "orgKey": "YOUR_ORG_KEY",
+        "tokenSkewSeconds": 30,
+        "timeoutMs": 30000,
+        "maxRetries": 4,
+        "retryBaseMs": 500,
+        "maxPages": 50
+    },
+    {
+        "id": "inj-donations",
+        "type": "inject",
+        "z": "tab-donations",
+        "name": "Fetch all",
+        "props": [
+            {
+                "p": "filters",
+                "v": "{\"org_key\":\"YOUR_ORG_KEY\"}",
+                "vt": "json"
+            },
+            {
+                "p": "pagination",
+                "v": "all",
+                "vt": "str"
+            },
+            {
+                "p": "pageSize",
+                "v": "100",
+                "vt": "num"
+            },
+            {
+                "p": "sort",
+                "v": "-auth_date",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "donations-list"
+            ]
+        ]
+    },
+    {
+        "id": "donations-list",
+        "type": "subsplash-donations",
+        "z": "tab-donations",
+        "name": "All donations",
+        "subsplash": "cfg-donations",
+        "operation": "GetAllDonations",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "include",
+        "accept": "",
+        "output": "items",
+        "applyDefaultKeys": true,
+        "x": 390,
+        "y": 120,
+        "wires": [
+            [
+                "dbg-donations"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-donations",
+        "type": "debug",
+        "z": "tab-donations",
+        "name": "Donations",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 620,
+        "y": 120,
+        "wires": []
+    }
+]

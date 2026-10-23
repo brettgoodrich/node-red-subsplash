@@ -1,0 +1,104 @@
+<script type="text/javascript">
+    RED.nodes.registerType("subsplash-config", {
+        category: "config",
+        defaults: {
+            name: { value: "" },
+            baseUrl: {
+                value: "https://core.subsplash.com",
+                required: true,
+                validate: window.subsplashBaseUrl
+            },
+            appKey: { value: "" },
+            orgKey: { value: "" },
+            tokenSkewSeconds: { value: 30, validate: RED.validators.number() },
+            timeoutMs: { value: 30000, validate: RED.validators.number() },
+            maxRetries: { value: 4, validate: RED.validators.number() },
+            retryBaseMs: { value: 500, validate: RED.validators.number() },
+            maxPages: { value: 50, validate: RED.validators.number() }
+        },
+        credentials: {
+            clientId: { type: "text" },
+            clientSecret: { type: "password" },
+            accessToken: { type: "password" },
+            addClaims: { type: "text" }
+        },
+        label: function () {
+            return this.name || "subsplash account";
+        },
+        icon: "subsplash.svg",
+        color: "#F3D6C3"
+    });
+</script>
+
+<script type="text/html" data-template-name="subsplash-config">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Production">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-baseUrl"><i class="fa fa-globe"></i> Base URL</label>
+        <input type="text" id="node-config-input-baseUrl" placeholder="https://core.subsplash.com">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-clientId"><i class="fa fa-user"></i> Client ID</label>
+        <input type="text" id="node-config-input-clientId" placeholder="API client UUID">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-clientSecret"><i class="fa fa-key"></i> Client secret</label>
+        <input type="password" id="node-config-input-clientSecret">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-accessToken"><i class="fa fa-ticket"></i> Access token</label>
+        <input type="password" id="node-config-input-accessToken" placeholder="Optional. Skips the token call until it is rejected.">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-addClaims"><i class="fa fa-code"></i> Add claims</label>
+        <input type="text" id="node-config-input-addClaims" placeholder='Optional JSON claims. Only if can_define_scope is true.'>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-appKey"><i class="fa fa-mobile"></i> App key</label>
+        <input type="text" id="node-config-input-appKey" placeholder="Optional default, for example CHURCH">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-orgKey"><i class="fa fa-building"></i> Org key</label>
+        <input type="text" id="node-config-input-orgKey" placeholder="Optional 8 character org key">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-tokenSkewSeconds"><i class="fa fa-clock-o"></i> Refresh skew</label>
+        <input type="text" id="node-config-input-tokenSkewSeconds" placeholder="30">
+        <div class="form-tips">Seconds before expiry to request a new token.</div>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-timeoutMs"><i class="fa fa-hourglass-end"></i> Timeout (ms)</label>
+        <input type="text" id="node-config-input-timeoutMs">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-maxRetries"><i class="fa fa-repeat"></i> Max retries</label>
+        <input type="text" id="node-config-input-maxRetries">
+        <div class="form-tips">Extra attempts after a 429, and after a 502/503/504 on GET, HEAD, OPTIONS, and DELETE. POST and PATCH are retried only on 429. Retry-After is honored up to 120 seconds.</div>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-retryBaseMs"><i class="fa fa-tachometer"></i> Retry base (ms)</label>
+        <input type="text" id="node-config-input-retryBaseMs">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-maxPages"><i class="fa fa-files-o"></i> Max pages</label>
+        <input type="text" id="node-config-input-maxPages">
+        <div class="form-tips">Safety cap when a node is set to fetch all pages. Hard limit is 500.</div>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="subsplash-config">
+    <p>Stores the Subsplash API client credentials and fetches bearer tokens for the other Subsplash nodes.</p>
+    <h3>Details</h3>
+    <p>Subsplash authenticates resource calls with an RS256 bearer token. This node requests one with the client-credentials grant: <code>POST /tokens/v1/token</code> as <code>application/x-www-form-urlencoded</code> with <code>grant_type</code>, <code>client_id</code>, and <code>client_secret</code>. The token is cached in memory and refreshed <code>expires_in</code> seconds after it was issued, minus the refresh skew (30 seconds by default). A 401 on a later call clears the cache, requests a new token once, and retries the call.</p>
+    <p>Client id, client secret, optional access token, and optional add-claims JSON are stored as Node-RED credentials. They are not written into the flow. An access token, when set, is sent as-is until Subsplash rejects it. If a client id and secret are also set, a 401 then falls back to the client-credentials grant.</p>
+    <p>App key and org key are not secrets. Resource nodes can copy them into <code>filter[app_key]</code> and <code>filter[org_key]</code> when the operation documents that filter and the message did not set one.</p>
+    <p>The published OpenAPI spec does not give a numeric request quota. When Subsplash responds with HTTP 429 (<code>too_many_requests</code>), the node waits for the <code>Retry-After</code> header, capped at 120 seconds, then retries. Without that header it waits using exponential backoff from the retry base. GET, HEAD, OPTIONS, and DELETE are also retried on HTTP 502, 503, and 504. POST and PATCH are not retried on those statuses, so a create is not sent twice.</p>
+    <p>API credentials come from your Subsplash representative. The developer-site access form does not issue a client id or secret. Public signing-key reads do not use the bearer token.</p>
+    <h3>References</h3>
+    <ul>
+        <li><a href="https://developer.subsplash.com/api/openapi.yaml">Subsplash OpenAPI specification</a></li>
+        <li><a href="https://developer.subsplash.com/">Subsplash developer site</a></li>
+    </ul>
+</script>

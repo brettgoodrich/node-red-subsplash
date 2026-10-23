@@ -1,0 +1,196 @@
+[
+    {
+        "id": "tab-raw",
+        "type": "tab",
+        "label": "Raw request and errors",
+        "disabled": false,
+        "info": "The top row calls GET /media/v1/media-items through the generic request node. The bottom row requests a profile id that does not exist and sends the API error to a Catch node. msg.statusCode and msg.subsplash.error.code are available on that message."
+    },
+    {
+        "id": "cfg-raw",
+        "type": "subsplash-config",
+        "name": "Subsplash",
+        "baseUrl": "https://core.subsplash.com",
+        "appKey": "",
+        "orgKey": "",
+        "tokenSkewSeconds": 30,
+        "timeoutMs": 30000,
+        "maxRetries": 4,
+        "retryBaseMs": 500,
+        "maxPages": 50
+    },
+    {
+        "id": "inj-raw",
+        "type": "inject",
+        "z": "tab-raw",
+        "name": "GET media items",
+        "props": [
+            {
+                "p": "query",
+                "v": "{\"page[size]\":\"5\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "raw-get"
+            ]
+        ]
+    },
+    {
+        "id": "raw-get",
+        "type": "subsplash-request",
+        "z": "tab-raw",
+        "name": "Raw media list",
+        "subsplash": "cfg-raw",
+        "method": "GET",
+        "path": "/media/v1/media-items",
+        "resourceId": "",
+        "authenticate": true,
+        "body": "",
+        "contentType": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "",
+        "accept": "",
+        "output": "response",
+        "x": 420,
+        "y": 80,
+        "wires": [
+            [
+                "dbg-raw"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-raw",
+        "type": "debug",
+        "z": "tab-raw",
+        "name": "Raw response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 660,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "inj-missing",
+        "type": "inject",
+        "z": "tab-raw",
+        "name": "Missing profile",
+        "props": [
+            {
+                "p": "resourceId",
+                "v": "00000000-0000-4000-8000-000000000000",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "missing-profile"
+            ]
+        ]
+    },
+    {
+        "id": "missing-profile",
+        "type": "subsplash-people",
+        "z": "tab-raw",
+        "name": "Get profile",
+        "subsplash": "cfg-raw",
+        "operation": "GetOneProfile",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "",
+        "accept": "",
+        "output": "response",
+        "applyDefaultKeys": true,
+        "x": 410,
+        "y": 200,
+        "wires": [
+            [
+                "dbg-ok"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-ok",
+        "type": "debug",
+        "z": "tab-raw",
+        "name": "Unexpected success",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 660,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "catch-missing",
+        "type": "catch",
+        "z": "tab-raw",
+        "name": "API errors",
+        "scope": [
+            "missing-profile"
+        ],
+        "uncaught": false,
+        "x": 400,
+        "y": 280,
+        "wires": [
+            [
+                "dbg-err"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-err",
+        "type": "debug",
+        "z": "tab-raw",
+        "name": "statusCode and error code",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 680,
+        "y": 280,
+        "wires": []
+    }
+]

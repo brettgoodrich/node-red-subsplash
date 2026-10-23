@@ -1,0 +1,156 @@
+[
+    {
+        "id": "tab-profile",
+        "type": "tab",
+        "label": "Create and update a profile",
+        "disabled": false,
+        "info": "Creates a profile from msg.payload, then patches the same profile using the id returned by Subsplash. Replace the org key and the sample name before deploying."
+    },
+    {
+        "id": "cfg-profile",
+        "type": "subsplash-config",
+        "name": "Subsplash",
+        "baseUrl": "https://core.subsplash.com",
+        "appKey": "",
+        "orgKey": "YOUR_ORG_KEY",
+        "tokenSkewSeconds": 30,
+        "timeoutMs": 30000,
+        "maxRetries": 4,
+        "retryBaseMs": 500,
+        "maxPages": 50
+    },
+    {
+        "id": "inj-profile",
+        "type": "inject",
+        "z": "tab-profile",
+        "name": "New person",
+        "props": [
+            {
+                "p": "payload",
+                "v": "{\"org_key\":\"YOUR_ORG_KEY\",\"first_name\":\"Ada\",\"last_name\":\"Lovelace\",\"status\":\"active\"}",
+                "vt": "json"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "profile-create"
+            ]
+        ]
+    },
+    {
+        "id": "profile-create",
+        "type": "subsplash-people",
+        "z": "tab-profile",
+        "name": "Create profile",
+        "subsplash": "cfg-profile",
+        "operation": "CreateProfile",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "",
+        "accept": "",
+        "output": "response",
+        "applyDefaultKeys": true,
+        "x": 380,
+        "y": 100,
+        "wires": [
+            [
+                "profile-id"
+            ]
+        ]
+    },
+    {
+        "id": "profile-id",
+        "type": "change",
+        "z": "tab-profile",
+        "name": "Id and patch body",
+        "rules": [
+            {
+                "t": "set",
+                "p": "resourceId",
+                "pt": "msg",
+                "to": "payload.id",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "body",
+                "pt": "msg",
+                "to": "{\"status\":\"active\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 620,
+        "y": 100,
+        "wires": [
+            [
+                "profile-update"
+            ]
+        ]
+    },
+    {
+        "id": "profile-update",
+        "type": "subsplash-people",
+        "z": "tab-profile",
+        "name": "Update profile",
+        "subsplash": "cfg-profile",
+        "operation": "UpdateProfile",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "",
+        "accept": "",
+        "output": "response",
+        "applyDefaultKeys": true,
+        "x": 860,
+        "y": 100,
+        "wires": [
+            [
+                "dbg-profile"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-profile",
+        "type": "debug",
+        "z": "tab-profile",
+        "name": "Updated profile",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1080,
+        "y": 100,
+        "wires": []
+    }
+]

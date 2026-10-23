@@ -1,0 +1,158 @@
+[
+    {
+        "id": "tab-hooks",
+        "type": "tab",
+        "label": "Signing keys and webhook secret",
+        "disabled": false,
+        "info": "The top inject lists public signing keys. That call does not send a bearer token, so it works before credentials are saved, as long as the base URL is reachable. The bottom inject rotates a webhook secret. Set msg.resourceId to the webhook id. The new secret is returned once."
+    },
+    {
+        "id": "cfg-hooks",
+        "type": "subsplash-config",
+        "name": "Subsplash",
+        "baseUrl": "https://core.subsplash.com",
+        "appKey": "",
+        "orgKey": "",
+        "tokenSkewSeconds": 30,
+        "timeoutMs": 30000,
+        "maxRetries": 4,
+        "retryBaseMs": 500,
+        "maxPages": 50
+    },
+    {
+        "id": "inj-keys",
+        "type": "inject",
+        "z": "tab-hooks",
+        "name": "List signing keys",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "keys"
+            ]
+        ]
+    },
+    {
+        "id": "keys",
+        "type": "subsplash-tokens",
+        "z": "tab-hooks",
+        "name": "Public keys",
+        "subsplash": "cfg-hooks",
+        "operation": "GetAllPublicKeys",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "",
+        "accept": "",
+        "output": "response",
+        "applyDefaultKeys": true,
+        "x": 420,
+        "y": 80,
+        "wires": [
+            [
+                "dbg-keys"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-keys",
+        "type": "debug",
+        "z": "tab-hooks",
+        "name": "Keys",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 640,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "inj-rotate",
+        "type": "inject",
+        "z": "tab-hooks",
+        "name": "Rotate secret",
+        "props": [
+            {
+                "p": "resourceId",
+                "v": "00000000-0000-4000-8000-000000000000",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 170,
+        "y": 200,
+        "wires": [
+            [
+                "rotate"
+            ]
+        ]
+    },
+    {
+        "id": "rotate",
+        "type": "subsplash-webhooks",
+        "z": "tab-hooks",
+        "name": "Rotate webhook secret",
+        "subsplash": "cfg-hooks",
+        "operation": "RotateWebhookSecret",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "",
+        "accept": "",
+        "output": "response",
+        "applyDefaultKeys": true,
+        "x": 430,
+        "y": 200,
+        "wires": [
+            [
+                "dbg-rotate"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-rotate",
+        "type": "debug",
+        "z": "tab-hooks",
+        "name": "New secret",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 680,
+        "y": 200,
+        "wires": []
+    }
+]

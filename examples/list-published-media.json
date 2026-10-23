@@ -1,0 +1,109 @@
+[
+    {
+        "id": "tab-media",
+        "type": "tab",
+        "label": "List published media",
+        "disabled": false,
+        "info": "Lists published media items, newest first, with images and audio embedded. Add your client id and secret on the Subsplash account config, and set the app key if you want it applied automatically."
+    },
+    {
+        "id": "cfg-media",
+        "type": "subsplash-config",
+        "name": "Subsplash",
+        "baseUrl": "https://core.subsplash.com",
+        "appKey": "",
+        "orgKey": "",
+        "tokenSkewSeconds": 30,
+        "timeoutMs": 30000,
+        "maxRetries": 4,
+        "retryBaseMs": 500,
+        "maxPages": 50
+    },
+    {
+        "id": "inj-media",
+        "type": "inject",
+        "z": "tab-media",
+        "name": "List published",
+        "props": [
+            {
+                "p": "filters",
+                "v": "{\"status\":\"published\"}",
+                "vt": "json"
+            },
+            {
+                "p": "include",
+                "v": "images,audio",
+                "vt": "str"
+            },
+            {
+                "p": "sort",
+                "v": "-published_at",
+                "vt": "str"
+            },
+            {
+                "p": "pageSize",
+                "v": "25",
+                "vt": "num"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "media-list"
+            ]
+        ]
+    },
+    {
+        "id": "media-list",
+        "type": "subsplash-media",
+        "z": "tab-media",
+        "name": "Published media",
+        "subsplash": "cfg-media",
+        "operation": "GetAllMediaItems",
+        "resourceId": "",
+        "body": "",
+        "filters": "",
+        "include": "",
+        "sort": "",
+        "fields": "",
+        "query": "",
+        "headers": "",
+        "pageNumber": "",
+        "pageSize": "",
+        "pagination": "page",
+        "collectionTotal": "include",
+        "accept": "",
+        "output": "items",
+        "applyDefaultKeys": true,
+        "x": 400,
+        "y": 120,
+        "wires": [
+            [
+                "dbg-media"
+            ]
+        ]
+    },
+    {
+        "id": "dbg-media",
+        "type": "debug",
+        "z": "tab-media",
+        "name": "Media items",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 120,
+        "wires": []
+    }
+]
