@@ -258,4 +258,6 @@ test("resource dialogs can hide fields and the request node keeps them", () => {
     assert.ok(donationsHtml.includes("node-input-output"));
     assert.ok(html.includes("ui.paging"));
     assert.ok(html.includes("select.on(\"change\", describe)"));
+    assert.equal(html.includes("subsplash-op-filter"), false);
+    assert.equal(html.includes("Filter the operation list"), false);
 });

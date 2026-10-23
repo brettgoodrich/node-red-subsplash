@@ -72,7 +72,7 @@ Public signing-key reads (`GET /tokens/v1/keys` and `GET /tokens/v1/keys/{id}`) 
 | `subsplash-webhooks` | Webhooks, secret rotation, send attempts. |
 | `subsplash-request` | Any method and path on the configured host. |
 
-Each resource node has an operation list. The value stored on the node, and accepted on `msg.operation`, is the OpenAPI `operationId` (`GetAllMediaItems`, `RotateWebhookSecret`, and so on). The editor can filter that list.
+Each resource node has an operation list. The value stored on the node, and accepted on `msg.operation`, is the OpenAPI `operationId` (`GetAllMediaItems`, `RotateWebhookSecret`, and so on). The dropdown lists every operation on that node.
 
 Several Push, Payments, and token paths are unversioned (`/notifications`, `/topics`, `/payments`, `/refunds`, `/instruments`, `/payment-intents`, `/setup-intents`, `/bulk-topic-subscriptions`). The nodes use the paths from the spec as they are.
 

@@ -588,10 +588,6 @@ DIALOG = """
         <input type="text" id="node-input-subsplash">
     </div>
     <div class="form-row">
-        <label for="subsplash-op-filter"><i class="fa fa-search"></i> Find</label>
-        <input type="text" id="subsplash-op-filter" placeholder="Filter the operation list">
-    </div>
-    <div class="form-row">
         <label for="node-input-operation"><i class="fa fa-tasks"></i> Operation</label>
         <select id="node-input-operation" style="width:70%;"></select>
     </div>

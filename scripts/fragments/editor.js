@@ -46,16 +46,10 @@ window.subsplashLabel = function (node) {
 window.subsplashPrepare = function (node) {
     var ops = (window.SUBSPLASH_EDITOR_CATALOG && window.SUBSPLASH_EDITOR_CATALOG[node.type]) || [];
     var select = $("#node-input-operation");
-    var filter = $("#subsplash-op-filter");
-    function fill(term) {
+    function fill() {
         var current = select.val() || node.operation;
-        var needle = (term || "").toLowerCase();
         select.empty();
         ops.forEach(function (op) {
-            var hay = (op.label + " " + op.method + " " + op.path + " " + op.operationId).toLowerCase();
-            if (needle && hay.indexOf(needle) === -1 && op.operationId !== current) {
-                return;
-            }
             var text = op.label + "  —  " + op.method + " " + op.path;
             $("<option>").val(op.operationId).text(text).appendTo(select);
         });
@@ -124,11 +118,7 @@ window.subsplashPrepare = function (node) {
         }
         $("#subsplash-op-summary").text(bits.join(". ") + ".");
     }
-    filter.on("keyup input", function () {
-        fill(filter.val());
-        describe();
-    });
     select.on("change", describe);
-    fill("");
+    fill();
     describe();
 };
