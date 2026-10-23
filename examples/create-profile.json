@@ -4,7 +4,7 @@
         "type": "tab",
         "label": "Create and update a profile",
         "disabled": false,
-        "info": "Creates a profile from msg.payload, then patches the same profile using the id returned by Subsplash. Replace the org key and the sample name before deploying."
+        "info": "Creates a profile from msg.payload, then patches the same profile using the id returned by Subsplash. Replace the org key and the sample name before deploying. Package: @brettgoodrich/node-red-subsplash. Palette category: Subsplash."
     },
     {
         "id": "cfg-profile",

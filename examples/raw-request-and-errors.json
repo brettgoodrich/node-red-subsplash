@@ -4,7 +4,7 @@
         "type": "tab",
         "label": "Raw request and errors",
         "disabled": false,
-        "info": "The top row calls GET /media/v1/media-items through the generic request node. The bottom row requests a profile id that does not exist and sends the API error to a Catch node. msg.statusCode and msg.subsplash.error.code are available on that message."
+        "info": "The top row calls GET /media/v1/media-items through the generic request node. The bottom row requests a profile id that does not exist and sends the API error to a Catch node. msg.statusCode and msg.subsplash.error.code are available on that message. Package: @brettgoodrich/node-red-subsplash. Palette category: Subsplash."
     },
     {
         "id": "cfg-raw",

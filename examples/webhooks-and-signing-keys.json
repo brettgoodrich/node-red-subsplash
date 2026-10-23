@@ -4,7 +4,7 @@
         "type": "tab",
         "label": "Signing keys and webhook secret",
         "disabled": false,
-        "info": "The top inject lists public signing keys. That call does not send a bearer token, so it works before credentials are saved, as long as the base URL is reachable. The bottom inject rotates a webhook secret. Set msg.resourceId to the webhook id. The new secret is returned once."
+        "info": "The top inject lists public signing keys. That call does not send a bearer token, so it works before credentials are saved, as long as the base URL is reachable. The bottom inject rotates a webhook secret. Set msg.resourceId to the webhook id. The new secret is returned once. Package: @brettgoodrich/node-red-subsplash. Palette category: Subsplash."
     },
     {
         "id": "cfg-hooks",

@@ -4,7 +4,7 @@
         "type": "tab",
         "label": "List published media",
         "disabled": false,
-        "info": "Lists published media items, newest first, with images and audio embedded. Add your client id and secret on the Subsplash account config, and set the app key if you want it applied automatically."
+        "info": "Lists published media items, newest first, with images and audio embedded. Add your client id and secret on the Subsplash account config, and set the app key if you want it applied automatically. Package: @brettgoodrich/node-red-subsplash. Palette category: Subsplash."
     },
     {
         "id": "cfg-media",

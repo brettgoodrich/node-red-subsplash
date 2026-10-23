@@ -4,7 +4,7 @@
         "type": "tab",
         "label": "Export donations",
         "disabled": false,
-        "info": "Walks every page of donations for an organization. Replace YOUR_ORG_KEY with the 8 character org key. GetAllDonations documents filter[org_key], so a config-node org key is copied in when the message does not set one. The OpenAPI operation does not mark that filter required."
+        "info": "Walks every page of donations for an organization. Replace YOUR_ORG_KEY with the 8 character org key. GetAllDonations documents filter[org_key], so a config-node org key is copied in when the message does not set one. The OpenAPI operation does not mark that filter required. Package: @brettgoodrich/node-red-subsplash. Palette category: Subsplash."
     },
     {
         "id": "cfg-donations",

@@ -1,4 +1,4 @@
-# node-red-contrib-subsplash
+# @brettgoodrich/node-red-subsplash
 
 Node-RED nodes for the [Subsplash REST API](https://developer.subsplash.com/api/openapi.yaml). One config node holds your API client credentials, refreshes bearer tokens, and backs off when Subsplash rate-limits you. Resource nodes cover every operation in the OpenAPI document (126 operations, 71 paths), and a request node can call any other path on the same host.
 
@@ -16,16 +16,16 @@ The catalog was generated from OpenAPI 3.0.2, spec version 1.0.0, fetched from `
 From your Node-RED user directory, usually `~/.node-red`:
 
 ```bash
-npm install node-red-contrib-subsplash
+npm install @brettgoodrich/node-red-subsplash
 ```
 
-Restart Node-RED. The nodes appear in the palette under **Subsplash**.
+Restart Node-RED. The nodes appear in the palette under **Subsplash**. Node type ids stay `subsplash-*` (`subsplash-media`, `subsplash-request`, and the rest). The config node is `subsplash-config`.
 
 To try the package from a git checkout instead of npm:
 
 ```bash
 cd ~/.node-red
-npm install /path/to/node-red-contrib-subsplash
+npm install /path/to/node-red-subsplash
 ```
 
 ## Account setup
