@@ -72,7 +72,7 @@ Public signing-key reads (`GET /tokens/v1/keys` and `GET /tokens/v1/keys/{id}`) 
 | `subsplash-webhooks` | Webhooks, secret rotation, send attempts. |
 | `subsplash-request` | Any method and path on the configured host. |
 
-Each resource node has an operation list. The value stored on the node, and accepted on `msg.operation`, is the OpenAPI `operationId` (`GetAllMediaItems`, `RotateWebhookSecret`, and so on). The dropdown lists every operation on that node.
+Each resource node has an operation list. The value stored on the node, and accepted on `msg.operation`, is the OpenAPI `operationId` (`GetAllMediaItems`, `RotateWebhookSecret`, and so on). The dropdown lists every operation on that node, grouped by the spec tag (Campaign, Donation, Fund, and the rest).
 
 Several Push, Payments, and token paths are unversioned (`/notifications`, `/topics`, `/payments`, `/refunds`, `/instruments`, `/payment-intents`, `/setup-intents`, `/bulk-topic-subscriptions`). The nodes use the paths from the spec as they are.
 
@@ -84,10 +84,26 @@ The edit dialog shows a field only when the selected operation declares it. Reso
 
 `msg.id` is not read. Node-RED messages are not given an id you should overload. Use `msg.resourceId`.
 
+### Editor controls
+
+The dialog still hides a field the selected operation does not declare. What you type is saved in the same text or JSON an older flow already used, so a flow exported before these controls still loads and runs. Opening a node does not rewrite it. Saving may compact JSON whitespace.
+
+- **Operation.** A dropdown of every operation, grouped with optgroups by the first spec tag. A value added to the API later can still be set with `msg.operation` after you regenerate the catalog.
+- **Resource ID.** A typed input: a literal string, or a value from the message, flow context, global context, or an environment variable. The placeholder is `uuid` when the path id is a UUID, `pi_...` for a payment intent, and `id` when the spec gives no format. `msg.resourceId` still wins when the message sets it. A typed value saved on a hidden Resource ID is not evaluated and is not sent.
+- **Body.** Node-RED's expanding JSON editor. **Insert template** writes the operation's writable request-body fields, required fields first, skipping read-only fields. Optional rows edit that same object: a key list from the schema, plus Custom, and a value control that matches the field type. **Reload fields** reads the JSON back into the rows.
+- **Filters.** One row per filter: a key list of the filters this operation declares, plus Custom; an operator (`=`, `!`, `<`, `>`, `<=`, `>=`); and a value control for that filter (a combo when the spec lists values, with Custom; a checkbox-style true/false, a number, a date, or text otherwise). The placeholder is that filter's example, not a generic `status`. JSON mode remains for a value the rows cannot represent. Rows are saved as the same filter object as before, for example `{"status":"!draft"}`.
+- **Include.** Chips for the include values the operation declares. Click a chip to toggle it, or type a value the spec does not list yet. Saved as a comma-separated string.
+- **Sort.** One row per field, from the operation's sort values, plus Custom. Each row is ascending or descending. Extra rows are sent as a comma-separated list, with `-` on descending fields.
+- **Fields.** One row per sparse fieldset. The type list is the operation's `fields[...]` names, plus Custom. The field list is comma-separated. When the spec lists the field names, an Add menu appends them. Saved as JSON, for example `{"responses":"count"}`.
+- **Query.** Key/value rows for any other query parameter, with the operation's query names offered as suggestions. JSON mode remains. This is the escape hatch for a parameter the other fields do not cover.
+- **Headers.** Key/value rows. The key suggests `Accept`, `Collection-Total`, `Collection-Stats`, `Cache-Control`, and `Pagination-Strategy` when the spec names them, and you can type any other header. A header the operation declares with a fixed set of values uses that list, plus Custom.
+
+The request node uses these same controls with free-text keys, because it is not tied to one operation. Header names are still suggested. Date-time filters stay text fields with an RFC3339 placeholder, so a value such as `2017-05-23T15:35:57Z` is not rewritten by a local date picker.
+
 | Property | Type | Effect |
 | --- | --- | --- |
 | `msg.operation` | string | Operation id, for example `GetOneProfile`. |
-| `msg.resourceId` | string | Fills `{id}` in the path. |
+| `msg.resourceId` | string | Fills `{id}` in the path. Wins over a typed Resource ID. |
 | `msg.pathParams` | object | Named path parameters when you need more than `id`. |
 | `msg.body` | object or string | Request body. Wins over `msg.payload`. |
 | `msg.payload` | object or string | Body when `msg.body` is absent and the editor body is empty. Ignored for GET and DELETE on the request node unless you set `msg.body`. |

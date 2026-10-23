@@ -379,3 +379,86 @@ test("a node without credentials reports a usable error", { timeout: 20000 }, as
     const msg = await pending;
     assert.match(msg.payload.message, /client id and client secret/);
 });
+
+test("a typed resource id is read from the message and msg.resourceId wins", { timeout: 20000 }, async () => {
+    await load(place([
+        { id: "tab", type: "tab", label: "typed-id" },
+        {
+            id: "cfg",
+            type: "subsplash-config",
+            baseUrl: BASE,
+            maxRetries: 0,
+            retryBaseMs: 1,
+            timeoutMs: 5000,
+            tokenSkewSeconds: 30
+        },
+        {
+            id: "media",
+            type: "subsplash-media",
+            z: "tab",
+            subsplash: "cfg",
+            operation: "GetOneMediaItem",
+            resourceId: "itemId",
+            resourceIdType: "msg",
+            applyDefaultKeys: false,
+            wires: [["out"]]
+        },
+        { id: "out", type: "helper", z: "tab" }
+    ]), {
+        cfg: { clientId: "11111111-1111-4111-8111-111111111111", clientSecret: "test-secret" }
+    });
+    nock(BASE).post("/tokens/v1/token").reply(200, TOKEN);
+    nock(BASE).get("/media/v1/media-items/from-msg").reply(200, { id: "from-msg" });
+    const first = once(helper.getNode("out"));
+    helper.getNode("media").receive({ itemId: "from-msg" });
+    const typed = await first;
+    assert.equal(typed.payload.id, "from-msg");
+    assert.equal(typed.subsplash.path, "/media/v1/media-items/from-msg");
+
+    nock(BASE).get("/media/v1/media-items/from-override").reply(200, { id: "from-override" });
+    const second = once(helper.getNode("out"));
+    helper.getNode("media").receive({ itemId: "from-msg", resourceId: "from-override" });
+    const overridden = await second;
+    assert.equal(overridden.payload.id, "from-override");
+    assert.equal(overridden.subsplash.path, "/media/v1/media-items/from-override");
+});
+
+test("a hidden resource id expression is not evaluated", { timeout: 20000 }, async () => {
+    await load(place([
+        { id: "tab", type: "tab", label: "hidden-id" },
+        {
+            id: "cfg",
+            type: "subsplash-config",
+            baseUrl: BASE,
+            maxRetries: 0,
+            retryBaseMs: 1,
+            timeoutMs: 5000,
+            tokenSkewSeconds: 30
+        },
+        {
+            id: "media",
+            type: "subsplash-media",
+            z: "tab",
+            subsplash: "cfg",
+            operation: "GetAllMediaItems",
+            resourceId: "{",
+            resourceIdType: "json",
+            applyDefaultKeys: false,
+            wires: [["out"]]
+        },
+        { id: "out", type: "helper", z: "tab" }
+    ]), {
+        cfg: { clientId: "11111111-1111-4111-8111-111111111111", clientSecret: "test-secret" }
+    });
+    nock(BASE).post("/tokens/v1/token").reply(200, TOKEN);
+    nock(BASE).get("/media/v1/media-items").query(true).reply(200, {
+        count: 0,
+        total: 0,
+        _embedded: { "media-items": [] }
+    });
+    const pending = once(helper.getNode("out"));
+    helper.getNode("media").receive({});
+    const msg = await pending;
+    assert.equal(msg.statusCode, 200);
+    assert.equal(msg.subsplash.path, "/media/v1/media-items");
+});

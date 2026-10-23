@@ -74,6 +74,8 @@ test("help and editor catalog include every node and operation", () => {
             assert.ok(html.includes("<h4>" + op.operationId + "</h4>"), op.operationId);
             const editorOp = editor[node.type].find((item) => item.operationId === op.operationId);
             assert.deepEqual(editorOp.ui, op.ui, op.operationId);
+            assert.deepEqual(editorOp.form, op.form, op.operationId + " form");
+            assert.deepEqual(editorOp.tags, op.tags, op.operationId + " tags");
         }
     }
 });

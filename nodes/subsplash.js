@@ -60,9 +60,12 @@ module.exports = function (RED) {
                 if (!cfg || typeof cfg.getClient !== "function") {
                     throw new SubsplashError("Select a Subsplash config node on the server connection.");
                 }
+                const operationId = (msg && msg.operation) || this.operation;
+                const operation = spec.operations.find((item) => item.operationId === operationId);
+                const allowTyped = !operation || !operation.ui || operation.ui.resourceId !== false;
                 const planned = planResource({
                     nodeSpec: spec,
-                    config: this,
+                    config: viewConfig(this, resolveResourceId(RED, this, msg, allowTyped)),
                     msg,
                     defaults: {
                         appKey: cfg.appKey,
@@ -91,7 +94,11 @@ module.exports = function (RED) {
             if (!cfg || typeof cfg.getClient !== "function") {
                 throw new SubsplashError("Select a Subsplash config node on the server connection.");
             }
-            const planned = planRaw({ config: this, msg, baseUrl: cfg.baseUrl });
+            const planned = planRaw({
+                config: viewConfig(this, resolveResourceId(RED, this, msg, true)),
+                msg,
+                baseUrl: cfg.baseUrl
+            });
             const result = await cfg.getClient().execute(planned.plan, {
                 onStatus: (status) => {
                     if (!this.closing) {
@@ -204,11 +211,53 @@ function clip(text, max) {
     return value.slice(0, max - 1) + "…";
 }
 
+function resolveResourceId(RED, node, msg, allowTyped) {
+    const type = node.resourceIdType || "str";
+    const messageHasId = msg && Object.prototype.hasOwnProperty.call(msg, "resourceId") && msg.resourceId !== undefined;
+    if (!allowTyped || messageHasId || type === "str" || !node.resourceId) {
+        return node.resourceId || "";
+    }
+    try {
+        const value = RED.util.evaluateNodeProperty(node.resourceId, type, node, msg);
+        return value === undefined || value === null ? "" : String(value);
+    } catch (err) {
+        throw new SubsplashError("Resource ID (" + type + ") could not be read: " + (err.message || err));
+    }
+}
+
+function viewConfig(node, resourceId) {
+    return {
+        operation: node.operation,
+        resourceId,
+        pathParams: node.pathParams,
+        body: node.body,
+        filters: node.filters,
+        include: node.include,
+        sort: node.sort,
+        fields: node.fields,
+        query: node.query,
+        headers: node.headers,
+        pageNumber: node.pageNumber,
+        pageSize: node.pageSize,
+        pagination: node.pagination,
+        collectionTotal: node.collectionTotal,
+        collectionStats: node.collectionStats,
+        accept: node.accept,
+        output: node.output,
+        applyDefaultKeys: node.applyDefaultKeys,
+        method: node.method,
+        path: node.path,
+        authenticate: node.authenticate,
+        contentType: node.contentType
+    };
+}
+
 function copyResourceConfig(node, config) {
     node.name = config.name;
     node.subsplash = config.subsplash;
     node.operation = config.operation;
     node.resourceId = config.resourceId || "";
+    node.resourceIdType = config.resourceIdType || "str";
     node.pathParams = config.pathParams || "";
     node.body = config.body || "";
     node.filters = config.filters || "";
@@ -233,6 +282,7 @@ function copyRequestConfig(node, config) {
     node.method = config.method || "GET";
     node.path = config.path || "";
     node.resourceId = config.resourceId || "";
+    node.resourceIdType = config.resourceIdType || "str";
     node.authenticate = config.authenticate !== false;
     node.body = config.body || "";
     node.contentType = config.contentType || "";

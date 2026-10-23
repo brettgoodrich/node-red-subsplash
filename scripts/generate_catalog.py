@@ -190,15 +190,127 @@ def schema_type(schema):
     return ""
 
 
-def enum_values(schema):
-    if not isinstance(schema, dict):
-        return None
-    values = schema.get("enum")
-    if not isinstance(values, list) or not values or len(values) > 12:
-        return None
-    if not all(isinstance(item, (str, int, float, bool)) for item in values):
-        return None
-    return [str(item) for item in values]
+def enum_token(item):
+    if isinstance(item, bool):
+        return "true" if item else "false"
+    if isinstance(item, str):
+        return item
+    if isinstance(item, (int, float)) and not isinstance(item, bool):
+        return str(item)
+    return None
+
+
+def iter_schema_nodes(spec, schema, depth=0, seen=None):
+    """Yield schema objects, following $ref, allOf, anyOf, oneOf, and items. Does not walk properties."""
+    if depth > 12 or not isinstance(schema, dict):
+        return
+    seen = seen if seen is not None else set()
+    if "$ref" in schema:
+        ref = schema["$ref"]
+        if ref not in seen:
+            seen = set(seen)
+            seen.add(ref)
+            target = resolve_ref(spec, ref)
+            if isinstance(target, dict):
+                yield from iter_schema_nodes(spec, target, depth + 1, seen)
+        rest = {key: value for key, value in schema.items() if key != "$ref"}
+        if rest:
+            yield from iter_schema_nodes(spec, rest, depth + 1, seen)
+        return
+    yield schema
+    for key in ("allOf", "anyOf", "oneOf"):
+        for part in schema.get(key) or []:
+            if isinstance(part, dict):
+                yield from iter_schema_nodes(spec, part, depth + 1, seen)
+    items = schema.get("items")
+    if isinstance(items, dict):
+        yield from iter_schema_nodes(spec, items, depth + 1, seen)
+    elif isinstance(items, list):
+        for part in items:
+            if isinstance(part, dict):
+                yield from iter_schema_nodes(spec, part, depth + 1, seen)
+
+
+def schema_info(spec, schema):
+    info = {"type": "", "format": "", "enum": [], "example": None, "readOnly": False}
+    for node in iter_schema_nodes(spec, schema):
+        node_type = node.get("type")
+        if not info["type"] and node_type in ("string", "number", "integer", "boolean", "array", "object"):
+            info["type"] = node_type
+        if not info["format"] and isinstance(node.get("format"), str):
+            info["format"] = node["format"]
+        if node.get("readOnly") is True:
+            info["readOnly"] = True
+        if info["example"] is None and "example" in node:
+            token = enum_token(node.get("example"))
+            if token is not None:
+                info["example"] = token
+        for item in node.get("enum") or []:
+            token = enum_token(item)
+            if token is not None and token not in info["enum"]:
+                info["enum"].append(token)
+    return info
+
+
+def param_details(spec, param):
+    info = schema_info(spec, (param or {}).get("schema") or {})
+    example = enum_token((param or {}).get("example"))
+    if example is None:
+        example = info["example"]
+    if isinstance(example, str) and len(example) > 80:
+        example = example[:77].rstrip() + "..."
+    return info, example
+
+
+def enum_or_none(values):
+    return values or None
+
+
+def sort_fields(values):
+    fields = []
+    for value in values or []:
+        text = str(value)
+        if text[:1] in "+-":
+            text = text[1:]
+        if text and text not in fields:
+            fields.append(text)
+    return fields
+
+
+def filter_inner(name):
+    if name == "filter":
+        return "filter"
+    if name.startswith("filter[") and name.endswith("]"):
+        return name[len("filter["):-1]
+    return name
+
+
+def fields_inner(name):
+    if name.startswith("fields[") and name.endswith("]"):
+        return name[len("fields["):-1]
+    return ""
+
+
+def prose_headers(*texts):
+    found = []
+    for text in texts:
+        for name in re.findall(r"`([A-Z][A-Za-z0-9-]*):", text or ""):
+            if name not in found:
+                found.append(name)
+    return found
+
+
+def id_hint(spec, param):
+    if not param:
+        return ""
+    info, example = param_details(spec, param)
+    if isinstance(example, str):
+        match = re.match(r"^([A-Za-z][A-Za-z0-9]*)_", example)
+        if match:
+            return match.group(1) + "_..."
+    if info["format"] == "uuid":
+        return "uuid"
+    return ""
 
 
 def body_info(spec, operation):
@@ -219,16 +331,29 @@ def body_info(spec, operation):
     merged = merge_schema(spec, schema)
     fields = []
     required = set(merged.get("required") or [])
-    for name, prop in list((merged.get("properties") or {}).items())[:40]:
-        if name.startswith("x-"):
+    for name, prop in (merged.get("properties") or {}).items():
+        if not isinstance(name, str) or name.startswith("x-"):
             continue
         prop = prop if isinstance(prop, dict) else {}
-        fields.append({
+        info = schema_info(spec, prop)
+        if info["readOnly"]:
+            continue
+        field = {
             "name": name,
-            "type": schema_type(prop) or "value",
+            "type": info["type"] or schema_type(prop) or "value",
             "required": name in required,
             "description": clean(prop.get("description"), 140),
-        })
+        }
+        if info["format"]:
+            field["format"] = info["format"]
+        if info["enum"]:
+            field["enum"] = info["enum"]
+        example = info["example"]
+        if isinstance(example, str) and example:
+            field["example"] = example
+        fields.append(field)
+    fields.sort(key=lambda field: 0 if field["required"] else 1)
+    fields = fields[:80]
     return {
         "body": True,
         "bodyRequired": bool(body.get("required")),
@@ -314,24 +439,32 @@ def collect_parameters(spec, path_item, operation):
 def operation_record(spec, path, method, operation, path_item):
     params = collect_parameters(spec, path_item, operation)
     path_params = []
+    path_param_objs = []
     query = []
     headers = []
+    filters = []
+    include_values = []
+    sort_values = []
+    fieldsets = []
+    query_keys = []
     has_page_object = False
     has_page_number = False
     has_page_size = False
     for param in params:
         name = param.get("name")
         location = param.get("in")
-        schema = param.get("schema") or {}
+        info, example = param_details(spec, param)
         if location == "path":
             path_params.append(name)
+            path_param_objs.append(param)
             continue
         if location == "header":
-            headers.append({
+            header = {
                 "name": name,
                 "description": clean(param.get("description"), 180),
-                "enum": enum_values(schema),
-            })
+                "enum": enum_or_none(info["enum"]),
+            }
+            headers.append(header)
             continue
         if location != "query":
             continue
@@ -346,13 +479,34 @@ def operation_record(spec, path, method, operation, path_item):
         if name == "page[size]":
             has_page_size = True
             continue
+        query_keys.append(name)
+        if name == "include":
+            include_values = info["enum"]
+        elif name == "sort":
+            sort_values = sort_fields(info["enum"])
+        elif name == "filter" or name.startswith("filter["):
+            filters.append({
+                "name": filter_inner(name),
+                "type": info["type"] or "string",
+                "format": info["format"] or None,
+                "enum": enum_or_none(info["enum"]),
+                "example": example,
+            })
+        elif name == "fields" or name.startswith("fields["):
+            inner = fields_inner(name)
+            if inner:
+                fieldsets.append({
+                    "type": inner,
+                    "enum": enum_or_none(info["enum"]),
+                    "example": example,
+                })
         if name == "fields":
             continue
         query.append({
             "name": name,
             "required": bool(param.get("required")),
             "description": clean(param.get("description"), 180),
-            "enum": enum_values(schema),
+            "enum": enum_or_none(info["enum"]),
         })
     for name in re.findall(r"\{([^{}]+)\}", path):
         if name not in path_params:
@@ -367,6 +521,25 @@ def operation_record(spec, path, method, operation, path_item):
         page_undocumented = True
     info = body_info(spec, operation)
     ui = operation_ui(spec, operation, path_params, params, info["body"])
+    header_names = [header["name"] for header in headers]
+    for name in prose_headers(operation.get("description"), operation.get("summary")):
+        if name not in header_names:
+            headers.append({"name": name, "description": "", "enum": None})
+            header_names.append(name)
+    id_param = None
+    if len(path_param_objs) == 1:
+        id_param = path_param_objs[0]
+    else:
+        id_param = next((param for param in path_param_objs if param.get("name") == "id"), None)
+    form = {
+        "idHint": id_hint(spec, id_param),
+        "filters": filters,
+        "include": include_values,
+        "sort": sort_values,
+        "fieldsets": fieldsets,
+        "headers": [{"name": header["name"], "enum": header.get("enum")} for header in headers],
+        "queryKeys": query_keys,
+    }
     if "security" in operation:
         auth = bool(operation.get("security"))
     else:
@@ -391,6 +564,7 @@ def operation_record(spec, path, method, operation, path_item):
         "syntheticPages": bool(page_number),
         "pathParams": path_params,
         "ui": ui,
+        "form": form,
         "query": query,
         "headers": headers,
         "tags": tags,
@@ -433,8 +607,18 @@ def editor_catalog(nodes):
                 "contentType": op["contentType"],
                 "collection": op["collection"],
                 "pageUndocumented": op["pageUndocumented"],
+                "tags": op["tags"],
                 "requiredQuery": [param["name"] for param in op["query"] if param["required"]],
                 "ui": op["ui"],
+                "form": op["form"],
+                "bodyFields": [
+                    {
+                        key: field[key]
+                        for key in ("name", "type", "required", "format", "enum", "example")
+                        if field.get(key) not in (None, "", [])
+                    }
+                    for field in op["bodyFields"]
+                ],
             }
             for op in node["operations"]
         ]
@@ -562,7 +746,8 @@ def render_help(node):
 <p>{esc(node['blurb'])}</p>
 {shared_inputs()}
 <h3>Details</h3>
-    <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. The editor shows Resource ID, Body, Filters, Include, Sort, Fields, paging, Total, and Accept only when the selected operation declares them. Query, Headers, and Output stay available on every operation. A value saved in a hidden field is not sent. A property on the message is still sent, and it replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
+    <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. Operations are grouped by their spec tag. The editor shows Resource ID, Body, Filters, Include, Sort, Fields, paging, Total, and Accept only when the selected operation declares them. Query, Headers, and Output stay available on every operation. A value saved in a hidden field is not sent. A property on the message is still sent, and it replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
+    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor. Insert template writes the writable body fields from the spec, required first, and the field rows edit that same object. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and headers are key/value rows, with JSON still available. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
     <p>List calls can return one page or walk every page. Fetch-all follows the HAL <code>_links.next</code> link when Subsplash sends one. When the operation uses page numbers and there is no next link, further pages are requested until the page is short, <code>total</code> is reached, a page repeats, or the page cap is hit. A merged collection reports <code>count</code> as the number of combined resources. <code>subsplash.truncated</code> is true when the cap stopped the walk early.</p>
     <p>Set <code>output</code> to <code>items</code> when the next node wants the embedded array instead of the collection envelope. Other message properties are left in place.</p>
     <p>API failures call <code>done(err)</code>. Node-RED then reports the error with the message attached, so a Catch node receives <code>msg.statusCode</code>, the error body on <code>msg.payload</code>, and <code>msg.subsplash.error.code</code> (for example <code>resource_not_found</code> or <code>too_many_requests</code>).</p>
@@ -596,7 +781,8 @@ DIALOG = """
     </div>
     <div class="form-row subsplash-id">
         <label for="node-input-resourceId"><i class="fa fa-hashtag"></i> Resource ID</label>
-        <input type="text" id="node-input-resourceId" placeholder="msg.resourceId">
+        <input type="text" id="node-input-resourceId">
+        <input type="hidden" id="node-input-resourceIdType">
     </div>
     <div class="form-row subsplash-path-params">
         <label for="node-input-pathParams"><i class="fa fa-code"></i> Path params</label>
@@ -605,32 +791,72 @@ DIALOG = """
     </div>
     <div class="form-row subsplash-body">
         <label for="node-input-body"><i class="fa fa-file-code-o"></i> Body</label>
-        <input type="text" id="node-input-body" placeholder='{"title":"..."}'>
-        <div class="form-tips">JSON object, or form fields for the token call. Leave empty to use msg.body or msg.payload.</div>
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <input type="text" id="node-input-body" placeholder="{}">
+            <div style="margin-top:6px;">
+                <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
+                <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
+            </div>
+            <div class="form-tips">JSON editor. Insert template writes writable fields from the spec, required first. Field rows edit that object. Leave empty to use msg.body or msg.payload.</div>
+            <ol id="subsplash-body-fields" style="margin-top:6px;"></ol>
+        </div>
     </div>
     <div class="form-row subsplash-filters">
-        <label for="node-input-filters"><i class="fa fa-filter"></i> Filters</label>
-        <input type="text" id="node-input-filters" placeholder='{"status":"published"}'>
+        <label for="subsplash-filters-list"><i class="fa fa-filter"></i> Filters</label>
+        <input type="hidden" id="node-input-filters">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-filters-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-filters-list"></ol>
+            <textarea id="subsplash-filters-json" rows="4" style="display:none; width:100%;"></textarea>
+            <div class="form-tips">Keys and values come from this operation. Custom keys are allowed. JSON keeps the object that older flows saved.</div>
+        </div>
     </div>
     <div class="form-row subsplash-include">
-        <label for="node-input-include"><i class="fa fa-link"></i> Include</label>
-        <input type="text" id="node-input-include" placeholder="images,audio">
+        <label><i class="fa fa-link"></i> Include</label>
+        <input type="hidden" id="node-input-include">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <div id="subsplash-include-chips"></div>
+            <div style="margin-top:4px;">
+                <input type="text" id="subsplash-include-custom" placeholder="Add a value" style="width:70%;">
+                <button type="button" id="subsplash-include-add" class="red-ui-button">Add</button>
+            </div>
+        </div>
     </div>
     <div class="form-row subsplash-sort">
-        <label for="node-input-sort"><i class="fa fa-sort"></i> Sort</label>
-        <input type="text" id="node-input-sort" placeholder="-published_at">
+        <label for="subsplash-sort-list"><i class="fa fa-sort"></i> Sort</label>
+        <input type="hidden" id="node-input-sort">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <ol id="subsplash-sort-list"></ol>
+            <div class="form-tips">Add a row for each field. Descending is sent with a leading <code>-</code>.</div>
+        </div>
     </div>
     <div class="form-row subsplash-fields">
-        <label for="node-input-fields"><i class="fa fa-list"></i> Fields</label>
-        <input type="text" id="node-input-fields" placeholder='{"responses":"count"}'>
+        <label for="subsplash-fields-list"><i class="fa fa-list"></i> Fields</label>
+        <input type="hidden" id="node-input-fields">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-fields-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-fields-list"></ol>
+            <textarea id="subsplash-fields-json" rows="3" style="display:none; width:100%;"></textarea>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-query"><i class="fa fa-question"></i> Query</label>
-        <input type="text" id="node-input-query" placeholder='{"filter[short_code]":"ABC"}'>
+        <label for="subsplash-query-list"><i class="fa fa-question"></i> Query</label>
+        <input type="hidden" id="node-input-query">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-query-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-query-list"></ol>
+            <textarea id="subsplash-query-json" rows="3" style="display:none; width:100%;"></textarea>
+            <div class="form-tips">Escape hatch for any query parameter, including ones added to the API later.</div>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-headers"><i class="fa fa-header"></i> Headers</label>
-        <input type="text" id="node-input-headers" placeholder="{}">
+        <label for="subsplash-headers-list"><i class="fa fa-header"></i> Headers</label>
+        <input type="hidden" id="node-input-headers">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-headers-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-headers-list"></ol>
+            <textarea id="subsplash-headers-json" rows="3" style="display:none; width:100%;"></textarea>
+        </div>
     </div>
     <div class="form-row subsplash-page">
         <label for="node-input-pagination"><i class="fa fa-files-o"></i> Pages</label>
@@ -685,6 +911,7 @@ def render_resource_js(node):
             subsplash: {{ value: "", type: "subsplash-config", required: true }},
             operation: {{ value: "{default_op}", required: true }},
             resourceId: {{ value: "" }},
+            resourceIdType: {{ value: "str" }},
             pathParams: {{ value: "", validate: window.subsplashJsonOrEmpty }},
             body: {{ value: "", validate: window.subsplashJsonOrEmpty }},
             filters: {{ value: "", validate: window.subsplashJsonOrEmpty }},
@@ -711,6 +938,9 @@ def render_resource_js(node):
         }},
         oneditprepare: function () {{
             window.subsplashPrepare(this);
+        }},
+        oneditsave: function () {{
+            window.subsplashSave();
         }}
     }});
 </script>
@@ -739,6 +969,7 @@ REQUEST_NODE = r"""<script type="text/javascript">
                 }
             },
             resourceId: { value: "" },
+            resourceIdType: { value: "str" },
             authenticate: { value: true },
             body: { value: "", validate: window.subsplashJsonOrEmpty },
             contentType: { value: "" },
@@ -761,6 +992,12 @@ REQUEST_NODE = r"""<script type="text/javascript">
         paletteLabel: "request",
         label: function () {
             return this.name || (this.method ? this.method + " " + (this.path || "request") : "request");
+        },
+        oneditprepare: function () {
+            window.subsplashPrepareRequest(this);
+        },
+        oneditsave: function () {
+            window.subsplashSave();
         }
     });
 </script>
@@ -793,6 +1030,7 @@ REQUEST_NODE = r"""<script type="text/javascript">
     <div class="form-row">
         <label for="node-input-resourceId"><i class="fa fa-hashtag"></i> Resource ID</label>
         <input type="text" id="node-input-resourceId" placeholder="Used when the path contains {id}">
+        <input type="hidden" id="node-input-resourceIdType">
     </div>
     <div class="form-row">
         <label for="node-input-authenticate"><i class="fa fa-lock"></i> Bearer token</label>
@@ -804,31 +1042,66 @@ REQUEST_NODE = r"""<script type="text/javascript">
     </div>
     <div class="form-row">
         <label for="node-input-body"><i class="fa fa-file-code-o"></i> Body</label>
-        <input type="text" id="node-input-body" placeholder="{}">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <input type="text" id="node-input-body" placeholder="{}">
+            <div style="margin-top:6px;">
+                <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
+                <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
+            </div>
+            <ol id="subsplash-body-fields" style="margin-top:6px;"></ol>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-query"><i class="fa fa-question"></i> Query</label>
-        <input type="text" id="node-input-query" placeholder="{}">
+        <label for="subsplash-query-list"><i class="fa fa-question"></i> Query</label>
+        <input type="hidden" id="node-input-query">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-query-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-query-list"></ol>
+            <textarea id="subsplash-query-json" rows="3" style="display:none; width:100%;"></textarea>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-filters"><i class="fa fa-filter"></i> Filters</label>
-        <input type="text" id="node-input-filters" placeholder='{"status":"published"}'>
+        <label for="subsplash-filters-list"><i class="fa fa-filter"></i> Filters</label>
+        <input type="hidden" id="node-input-filters">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-filters-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-filters-list"></ol>
+            <textarea id="subsplash-filters-json" rows="4" style="display:none; width:100%;"></textarea>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-include"><i class="fa fa-link"></i> Include</label>
-        <input type="text" id="node-input-include">
+        <label><i class="fa fa-link"></i> Include</label>
+        <input type="hidden" id="node-input-include">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <div id="subsplash-include-chips"></div>
+            <div style="margin-top:4px;">
+                <input type="text" id="subsplash-include-custom" placeholder="Add a value" style="width:70%;">
+                <button type="button" id="subsplash-include-add" class="red-ui-button">Add</button>
+            </div>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-sort"><i class="fa fa-sort"></i> Sort</label>
-        <input type="text" id="node-input-sort">
+        <label for="subsplash-sort-list"><i class="fa fa-sort"></i> Sort</label>
+        <input type="hidden" id="node-input-sort">
+        <ol id="subsplash-sort-list" style="width:70%; display:inline-block;"></ol>
     </div>
     <div class="form-row">
-        <label for="node-input-fields"><i class="fa fa-list"></i> Fields</label>
-        <input type="text" id="node-input-fields">
+        <label for="subsplash-fields-list"><i class="fa fa-list"></i> Fields</label>
+        <input type="hidden" id="node-input-fields">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-fields-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-fields-list"></ol>
+            <textarea id="subsplash-fields-json" rows="3" style="display:none; width:100%;"></textarea>
+        </div>
     </div>
     <div class="form-row">
-        <label for="node-input-headers"><i class="fa fa-header"></i> Headers</label>
-        <input type="text" id="node-input-headers">
+        <label for="subsplash-headers-list"><i class="fa fa-header"></i> Headers</label>
+        <input type="hidden" id="node-input-headers">
+        <div style="width:70%; display:inline-block; vertical-align:top;">
+            <button type="button" id="subsplash-headers-mode" class="red-ui-button">JSON</button>
+            <ol id="subsplash-headers-list"></ol>
+            <textarea id="subsplash-headers-json" rows="3" style="display:none; width:100%;"></textarea>
+        </div>
     </div>
     <div class="form-row">
         <label for="node-input-pagination"><i class="fa fa-files-o"></i> Pages</label>
@@ -920,7 +1193,7 @@ REQUEST_NODE = r"""<script type="text/javascript">
         <dd>Method, path, paging metadata, and <code>error</code> when the call failed.</dd>
     </dl>
     <h3>Details</h3>
-    <p>Use this node for a path the resource nodes do not list, or when you already have a URL from a HAL <code>_links</code> object. Requests that point at a different host are rejected. Redirects are not followed.</p>
+    <p>Use this node for a path the resource nodes do not list, or when you already have a URL from a HAL <code>_links</code> object. Requests that point at a different host are rejected. Redirects are not followed. Resource ID, body, filters, include, sort, fields, query, and headers use the same controls as the resource nodes. Keys are free text here, because this node is not tied to one operation. Header names still suggest the headers named in the spec, and you can type any other name.</p>
     <p>The same token cache, 401 refresh, and 429 backoff as the resource nodes apply. POST, PUT, and PATCH are retried only when Subsplash returns 429.</p>
     <h3>References</h3>
     <ul>
@@ -930,14 +1203,39 @@ REQUEST_NODE = r"""<script type="text/javascript">
 """
 
 
-def render_html(nodes):
+def header_names(nodes):
+    names = []
+    for node in nodes:
+        for op in node["operations"]:
+            for header in op["form"]["headers"]:
+                name = header.get("name")
+                if name and name not in names:
+                    names.append(name)
+    return names
+
+
+def render_html(nodes, headers):
     editor = (ROOT / "scripts" / "fragments" / "editor.js").read_text()
+    fields = (ROOT / "lib" / "editor-fields.js").read_text()
     config = (ROOT / "scripts" / "fragments" / "config.html").read_text()
     catalog_json = json.dumps(editor_catalog(nodes), ensure_ascii=False).replace("<", "\\u003c")
+    header_json = json.dumps(headers).replace("<", "\\u003c")
     parts = [
         "<!-- Generated by scripts/generate_catalog.py. Regenerate instead of editing by hand. -->",
+        "<style>",
+        ".subsplash-chip { margin: 0 4px 4px 0; }",
+        ".subsplash-chip.selected { font-weight: 700; }",
+        ".subsplash-inline { display: flex; gap: 4px; align-items: center; }",
+        ".subsplash-inline select, .subsplash-inline input { width: auto; flex: 1; min-width: 0; }",
+        "</style>",
         "<script type=\"text/javascript\">",
         "window.SUBSPLASH_EDITOR_CATALOG = " + catalog_json + ";",
+        "window.SUBSPLASH_HEADER_NAMES = " + header_json + ";",
+        "</script>",
+        "<script type=\"text/javascript\">",
+        "var module = { exports: {} };",
+        fields,
+        "window.subsplashFields = module.exports;",
         "</script>",
         "<script type=\"text/javascript\">",
         editor,
@@ -1053,8 +1351,10 @@ def main():
         },
         "nodes": nodes,
     }
+    names = header_names(nodes)
+    catalog["meta"]["headerNames"] = names
     (ROOT / "lib" / "catalog.json").write_text(json.dumps(catalog, indent=2) + "\n")
-    (ROOT / "nodes" / "subsplash.html").write_text(render_html(nodes))
+    (ROOT / "nodes" / "subsplash.html").write_text(render_html(nodes, names))
     readme_path = ROOT / "README.md"
     if readme_path.is_file() and "GENERATED:COVERAGE:START" in readme_path.read_text():
         text = readme_path.read_text()

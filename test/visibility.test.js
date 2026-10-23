@@ -233,8 +233,10 @@ test("resource dialogs can hide fields and the request node keeps them", () => {
     assert.ok(requestHtml.includes("node-input-query"));
     assert.ok(requestHtml.includes("node-input-headers"));
     assert.ok(requestHtml.includes("node-input-output"));
-    assert.equal(requestHtml.includes("subsplash-sort"), false);
-    assert.equal(requestHtml.includes("subsplash-page"), false);
+    assert.equal(/class="[^"]*\bsubsplash-sort\b/.test(requestHtml), false);
+    assert.equal(/class="[^"]*\bsubsplash-page\b/.test(requestHtml), false);
+    assert.ok(requestHtml.includes("subsplash-sort-list"));
+    assert.ok(requestHtml.includes("node-input-resourceIdType"));
 
     const donationsAt = html.indexOf("data-template-name=\"subsplash-donations\"");
     const donationsHtml = html.slice(donationsAt, html.indexOf("</script>", donationsAt));
