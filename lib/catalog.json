@@ -31,6 +31,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -56,6 +69,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -144,6 +170,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -171,6 +210,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -259,6 +311,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -284,6 +349,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -309,6 +387,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -349,6 +440,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -376,6 +480,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -506,6 +623,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -539,6 +669,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": true,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[org_key]",
@@ -641,6 +784,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -675,6 +831,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": true,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[org_key]",
@@ -728,6 +897,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": true,
+            "accept": true,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -945,6 +1127,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -977,6 +1172,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[name]",
@@ -1015,6 +1223,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1055,6 +1276,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1082,6 +1316,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1114,6 +1361,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "include",
@@ -1178,6 +1438,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -1210,6 +1483,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": true,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[search]",
@@ -1354,6 +1640,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -1396,6 +1695,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -1448,6 +1760,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1473,6 +1798,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1603,6 +1941,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1630,6 +1981,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1760,6 +2124,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1785,6 +2162,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -1810,6 +2200,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2054,6 +2457,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2081,6 +2497,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2325,6 +2754,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2350,6 +2792,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2375,6 +2830,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2409,6 +2877,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2436,6 +2917,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2470,6 +2964,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2503,6 +3010,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": true,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -2614,6 +3134,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": true,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -2656,6 +3189,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": true,
+            "paging": true,
+            "total": true,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -2796,6 +3342,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -2841,6 +3400,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2866,6 +3438,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2948,6 +3533,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -2975,6 +3573,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3057,6 +3668,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3082,6 +3706,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3107,6 +3744,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3183,6 +3833,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3210,6 +3873,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3286,6 +3962,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3311,6 +4000,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3336,6 +4038,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -3496,6 +4211,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": true,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -3536,6 +4264,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": true,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -3709,6 +4450,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": true,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -3755,6 +4509,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -3839,6 +4606,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -3887,6 +4667,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -4121,6 +4914,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -4366,6 +5172,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -4400,6 +5219,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -4645,6 +5477,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -4670,6 +5515,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -4695,6 +5553,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -4849,6 +5720,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -4886,6 +5770,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -5050,6 +5947,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -5093,6 +6003,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -5171,6 +6094,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5283,6 +6219,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5310,6 +6259,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5422,6 +6384,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5455,6 +6430,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": true,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "sort",
@@ -5525,6 +6513,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5550,6 +6551,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5650,6 +6664,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -5675,6 +6702,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": true,
+            "paging": true,
+            "total": false,
+            "accept": true,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "sort",
@@ -5886,6 +6926,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -5918,6 +6971,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": true,
+            "sort": true,
+            "fields": true,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "sort",
@@ -5994,6 +7060,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -6026,6 +7105,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6108,6 +7200,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[org_key]",
@@ -6155,6 +7260,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6207,6 +7325,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6234,6 +7365,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6284,6 +7428,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": false,
+            "fields": true,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -6346,6 +7503,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6458,6 +7628,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6485,6 +7668,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6555,6 +7751,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6580,6 +7789,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": true,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "filter[id]",
@@ -6639,6 +7861,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6691,6 +7926,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6718,6 +7966,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6758,6 +8019,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -6783,6 +8057,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": true,
+            "fields": true,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "sort",
@@ -6935,6 +8222,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7143,6 +8443,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": true,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [
             {
               "name": "include",
@@ -7177,6 +8490,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7391,6 +8717,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7465,6 +8804,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7490,6 +8842,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7674,6 +9039,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7701,6 +9079,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7885,6 +9276,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7910,6 +9314,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[app_key]",
@@ -7974,6 +9391,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -7999,6 +9429,19 @@
           "pageUndocumented": false,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": true,
+            "include": false,
+            "sort": true,
+            "fields": false,
+            "paging": true,
+            "total": false,
+            "accept": false,
+            "defaultKeys": true
+          },
           "query": [
             {
               "name": "filter[app_key]",
@@ -8061,6 +9504,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8167,6 +9623,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8194,6 +9663,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8300,6 +9782,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8333,6 +9828,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8360,6 +9868,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8385,6 +9906,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8459,6 +9993,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8492,6 +10039,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8517,6 +10077,19 @@
           "pageUndocumented": true,
           "syntheticPages": true,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8542,6 +10115,19 @@
           "pageUndocumented": false,
           "syntheticPages": false,
           "pathParams": [],
+          "ui": {
+            "resourceId": false,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8630,6 +10216,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8657,6 +10256,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8745,6 +10357,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": false,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [
@@ -8772,6 +10397,19 @@
           "pathParams": [
             "id"
           ],
+          "ui": {
+            "resourceId": true,
+            "extraPathParams": [],
+            "body": true,
+            "filters": false,
+            "include": false,
+            "sort": false,
+            "fields": false,
+            "paging": false,
+            "total": false,
+            "accept": false,
+            "defaultKeys": false
+          },
           "query": [],
           "headers": [],
           "tags": [

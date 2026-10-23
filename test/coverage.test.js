@@ -72,6 +72,8 @@ test("help and editor catalog include every node and operation", () => {
         assert.deepEqual(editorOps, runtimeOps);
         for (const op of node.operations) {
             assert.ok(html.includes("<h4>" + op.operationId + "</h4>"), op.operationId);
+            const editorOp = editor[node.type].find((item) => item.operationId === op.operationId);
+            assert.deepEqual(editorOp.ui, op.ui, op.operationId);
         }
     }
 });

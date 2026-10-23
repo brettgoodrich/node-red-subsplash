@@ -246,6 +246,59 @@ def is_collection(method, operation):
     return operation_id.startswith("List") or operation_id.startswith("GetAll") or summary.startswith("list")
 
 
+def is_paging_name(name):
+    if not name:
+        return False
+    lower = name.lower()
+    return name == "page" or name.startswith("page[") or lower == "cursor" or lower.startswith("cursor[")
+
+
+def is_total_name(name):
+    compact = re.sub(r"[^a-z0-9]", "", (name or "").lower())
+    return compact in {"collectiontotal", "total"}
+
+
+def response_content_types(spec, operation):
+    found = set()
+    for code, response in (operation.get("responses") or {}).items():
+        if not str(code).startswith("2"):
+            continue
+        resolved = resolve_param(spec, response) if isinstance(response, dict) else {}
+        content = resolved.get("content") if isinstance(resolved, dict) else None
+        if isinstance(content, dict):
+            found.update(content.keys())
+    return found
+
+
+def operation_ui(spec, operation, path_params, params, has_body):
+    """Editor visibility. Query, headers, and output are always shown and are not flagged."""
+    query_names = []
+    header_names = []
+    for param in params:
+        name = param.get("name") or ""
+        location = param.get("in")
+        if location == "query":
+            query_names.append(name)
+        elif location == "header":
+            header_names.append(name)
+    extra = [name for name in path_params if name != "id"]
+    if len(path_params) == 1:
+        extra = []
+    return {
+        "resourceId": bool(path_params),
+        "extraPathParams": extra,
+        "body": bool(has_body),
+        "filters": any(name == "filter" or name.startswith("filter[") for name in query_names),
+        "include": any(name == "include" for name in query_names),
+        "sort": any(name == "sort" for name in query_names),
+        "fields": any(name == "fields" or name.startswith("fields[") for name in query_names),
+        "paging": any(is_paging_name(name) for name in query_names + header_names),
+        "total": any(is_total_name(name) for name in query_names + header_names),
+        "accept": len(response_content_types(spec, operation)) > 1,
+        "defaultKeys": any(name in ("filter[app_key]", "filter[org_key]") for name in query_names),
+    }
+
+
 def collect_parameters(spec, path_item, operation):
     """Path-item parameters apply to every method. Operation parameters override the same name and location."""
     ordered = {}
@@ -313,6 +366,7 @@ def operation_record(spec, path, method, operation, path_item):
         page_size = True
         page_undocumented = True
     info = body_info(spec, operation)
+    ui = operation_ui(spec, operation, path_params, params, info["body"])
     if "security" in operation:
         auth = bool(operation.get("security"))
     else:
@@ -336,6 +390,7 @@ def operation_record(spec, path, method, operation, path_item):
         "pageUndocumented": page_undocumented,
         "syntheticPages": bool(page_number),
         "pathParams": path_params,
+        "ui": ui,
         "query": query,
         "headers": headers,
         "tags": tags,
@@ -379,6 +434,7 @@ def editor_catalog(nodes):
                 "collection": op["collection"],
                 "pageUndocumented": op["pageUndocumented"],
                 "requiredQuery": [param["name"] for param in op["query"] if param["required"]],
+                "ui": op["ui"],
             }
             for op in node["operations"]
         ]
@@ -396,7 +452,7 @@ def shared_inputs():
         <dt class="optional">operation <span class="property-type">string</span></dt>
         <dd>Overrides the operation selected in the editor. Use the operation id shown below, for example <code>GetAllMediaItems</code>.</dd>
         <dt class="optional">resourceId <span class="property-type">string</span></dt>
-        <dd>Resource id for operations whose path contains <code>{id}</code>. Replaces the resource ID typed in the editor.</dd>
+        <dd>Resource id for operations whose path contains <code>{id}</code>. Replaces the resource ID typed in the editor. Still sent when the message sets it, even if that operation hides the field.</dd>
         <dt class="optional">body <span class="property-type">object | string</span></dt>
         <dd>Request body. When this is omitted, <code>msg.payload</code> is sent for operations that take a body.</dd>
         <dt class="optional">payload <span class="property-type">object | string</span></dt>
@@ -456,8 +512,8 @@ def render_operation_help(op):
     else:
         sentence += ". Does not send a bearer token."
     if op["collection"]:
-        if op["pageUndocumented"]:
-            sentence += " Collection. The OpenAPI operation does not declare page parameters; fetch-all still follows <code>_links.next</code>."
+        if not op["ui"]["paging"]:
+            sentence += " Collection. OpenAPI does not declare page parameters, so the paging fields are hidden. <code>msg.pagination</code>, <code>msg.pageNumber</code>, <code>msg.pageSize</code>, and <code>msg.query</code> still work, and fetch-all follows <code>_links.next</code>."
         else:
             sentence += " Paginated collection."
     if op["body"]:
@@ -506,7 +562,7 @@ def render_help(node):
 <p>{esc(node['blurb'])}</p>
 {shared_inputs()}
 <h3>Details</h3>
-    <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. Values typed in the editor are defaults. A property on the message replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
+    <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. The editor shows Resource ID, Body, Filters, Include, Sort, Fields, paging, Total, and Accept only when the selected operation declares them. Query, Headers, and Output stay available on every operation. A value saved in a hidden field is not sent. A property on the message is still sent, and it replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
     <p>List calls can return one page or walk every page. Fetch-all follows the HAL <code>_links.next</code> link when Subsplash sends one. When the operation uses page numbers and there is no next link, further pages are requested until the page is short, <code>total</code> is reached, a page repeats, or the page cap is hit. A merged collection reports <code>count</code> as the number of combined resources. <code>subsplash.truncated</code> is true when the cap stopped the walk early.</p>
     <p>Set <code>output</code> to <code>items</code> when the next node wants the embedded array instead of the collection envelope. Other message properties are left in place.</p>
     <p>API failures call <code>done(err)</code>. Node-RED then reports the error with the message attached, so a Catch node receives <code>msg.statusCode</code>, the error body on <code>msg.payload</code>, and <code>msg.subsplash.error.code</code> (for example <code>resource_not_found</code> or <code>too_many_requests</code>).</p>
@@ -546,24 +602,29 @@ DIALOG = """
         <label for="node-input-resourceId"><i class="fa fa-hashtag"></i> Resource ID</label>
         <input type="text" id="node-input-resourceId" placeholder="msg.resourceId">
     </div>
+    <div class="form-row subsplash-path-params">
+        <label for="node-input-pathParams"><i class="fa fa-code"></i> Path params</label>
+        <input type="text" id="node-input-pathParams" placeholder='{"slug":"..."}'>
+        <div class="form-tips">JSON object for path parameters other than id. msg.pathParams replaces these.</div>
+    </div>
     <div class="form-row subsplash-body">
         <label for="node-input-body"><i class="fa fa-file-code-o"></i> Body</label>
         <input type="text" id="node-input-body" placeholder='{"title":"..."}'>
         <div class="form-tips">JSON object, or form fields for the token call. Leave empty to use msg.body or msg.payload.</div>
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-filters">
         <label for="node-input-filters"><i class="fa fa-filter"></i> Filters</label>
         <input type="text" id="node-input-filters" placeholder='{"status":"published"}'>
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-include">
         <label for="node-input-include"><i class="fa fa-link"></i> Include</label>
         <input type="text" id="node-input-include" placeholder="images,audio">
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-sort">
         <label for="node-input-sort"><i class="fa fa-sort"></i> Sort</label>
         <input type="text" id="node-input-sort" placeholder="-published_at">
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-fields">
         <label for="node-input-fields"><i class="fa fa-list"></i> Fields</label>
         <input type="text" id="node-input-fields" placeholder='{"responses":"count"}'>
     </div>
@@ -590,7 +651,7 @@ DIALOG = """
         <label for="node-input-pageSize"><i class="fa fa-arrows-v"></i> Page size</label>
         <input type="text" id="node-input-pageSize" placeholder="25">
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-total">
         <label for="node-input-collectionTotal"><i class="fa fa-calculator"></i> Total</label>
         <select id="node-input-collectionTotal" style="width:70%;">
             <option value="">Default</option>
@@ -598,7 +659,7 @@ DIALOG = """
             <option value="omit">Omit collection total</option>
         </select>
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-accept">
         <label for="node-input-accept"><i class="fa fa-file-text-o"></i> Accept</label>
         <input type="text" id="node-input-accept" placeholder="application/hal+json or text/csv">
     </div>
@@ -609,7 +670,7 @@ DIALOG = """
             <option value="items">Embedded items</option>
         </select>
     </div>
-    <div class="form-row">
+    <div class="form-row subsplash-defaults">
         <label for="node-input-applyDefaultKeys"><i class="fa fa-magic"></i> Default keys</label>
         <input type="checkbox" id="node-input-applyDefaultKeys" style="width:auto; margin-top:7px;">
         <div class="form-tips">Fill documented filter[app_key] and filter[org_key] from the config node when the message does not set them.</div>
@@ -628,6 +689,7 @@ def render_resource_js(node):
             subsplash: {{ value: "", type: "subsplash-config", required: true }},
             operation: {{ value: "{default_op}", required: true }},
             resourceId: {{ value: "" }},
+            pathParams: {{ value: "", validate: window.subsplashJsonOrEmpty }},
             body: {{ value: "", validate: window.subsplashJsonOrEmpty }},
             filters: {{ value: "", validate: window.subsplashJsonOrEmpty }},
             include: {{ value: "" }},

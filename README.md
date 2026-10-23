@@ -80,6 +80,8 @@ Several Push, Payments, and token paths are unversioned (`/notifications`, `/top
 
 Editor fields are defaults. A property on the message replaces the same field. `filters`, `query`, and `headers` are merged, and the message wins when a key is in both.
 
+The edit dialog shows a field only when the selected operation declares it. Resource ID appears when the path has a parameter. An extra path-parameter field appears when a placeholder is not `{id}` (the current spec has none; every path parameter is `{id}`). Body appears when the operation has a request body. Filters, Include, Sort, Fields, paging, Total, and the default-keys checkbox appear when the OpenAPI operation lists those parameters. Accept appears only when a success response lists more than one content type. Query, Headers, and Output stay on every operation, so a custom or future parameter can still be typed in. The request node keeps every field. A value left on a hidden field is not sent. The same property on the message is still honored.
+
 `msg.id` is not read. Node-RED messages are not given an id you should overload. Use `msg.resourceId`.
 
 | Property | Type | Effect |
@@ -151,7 +153,7 @@ HAL `_links` on a collection include `self`, `first`, and `last`, plus `next` an
 
 When there is no `next` link, fetch-all requests the next `page[number]` if that operation uses page numbers, the page was full, and `total` (when present) is not yet reached. It stops when a page repeats, a page is short, `total` is reached, or the page cap is hit (50 by default, 500 maximum). `msg.subsplash.truncated` is true when the cap stopped the walk while another page still looked available.
 
-Some list operations in the OpenAPI file do not declare `page[number]` or `page[size]` even though the platform pagination guide describes those parameters for collections. The nodes still accept them, and the help text says when they were not declared. Leave the page fields blank to omit them. `ListBroadcasts` declares `page[size]` only, so fetch-all will not invent page numbers for it; it follows `next` links.
+Paging controls appear only when the operation declares `page[number]`, `page[size]`, `page`, or `cursor`. Some list operations omit those parameters even though the platform pagination guide describes them for collections. Those operations hide the paging fields, and a page size or fetch-all setting saved on the node is not sent. Pass `msg.pageNumber`, `msg.pageSize`, `msg.pagination`, or `msg.query` when you still need them. Fetch-all follows `_links.next`. `ListBroadcasts` declares `page[size]` only, so fetch-all will not invent page numbers for it; it follows `next` links.
 
 ## Errors
 
@@ -578,7 +580,7 @@ Every operation in the OpenAPI `paths` object is listed. Auth "no" means the nod
 These are limits of the published spec, not missing nodes. The request node can still call a path if you have one.
 
 - `OPTIONS /tokens/v1/token` (`OptionsToken`) is a CORS preflight. It is wired so the path is reachable. Flows do not need it.
-- Many list operations (builder lists, events, groups, media series, webhooks, and others) do not declare `filter`, `sort`, `include`, or `page` parameters, while the platform guides say collections support them. The nodes send those parameters only when you set them. An undeclared filter can still 400.
+- Many list operations (builder lists, events, groups, media series, webhooks, and others) do not declare `filter`, `sort`, `include`, or `page` parameters, while the platform guides say collections support them. The editor hides those fields. Set them on the message, or pass the query names in Query. An undeclared filter can still 400.
 - `ListBroadcasts` documents `page[size]` but not `page[number]`. Fetch-all follows `_links.next` and does not synthesize page numbers.
 - No request-per-minute figure is published. Backoff follows 429 and `Retry-After` only.
 - `GET /donations/v1/recurring-donations/{id}` documents a `filter[status]` query parameter, which is unusual on a get-by-id call. It is passed through when you set it.

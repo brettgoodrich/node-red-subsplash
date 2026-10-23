@@ -209,6 +209,7 @@ function copyResourceConfig(node, config) {
     node.subsplash = config.subsplash;
     node.operation = config.operation;
     node.resourceId = config.resourceId || "";
+    node.pathParams = config.pathParams || "";
     node.body = config.body || "";
     node.filters = config.filters || "";
     node.include = config.include || "";
