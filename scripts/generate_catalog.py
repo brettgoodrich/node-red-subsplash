@@ -747,7 +747,7 @@ def render_help(node):
 {shared_inputs()}
 <h3>Details</h3>
     <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. Operations are grouped by their spec tag. The editor shows Resource ID, Body, Filters, Include, Sort, Fields, paging, Total, and Accept only when the selected operation declares them. Query, Headers, and Output stay available on every operation. A value saved in a hidden field is not sent. A property on the message is still sent, and it replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
-    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor. Insert template writes the writable body fields from the spec, required first, and the field rows edit that same object. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and headers are key/value rows, with JSON still available. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
+    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor. Insert template writes the writable body fields from the spec, required first, and the field rows edit that same object. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and Headers stay available on every operation. They sit under Add Extras, which starts collapsed and opens when the node already has a query or header value. Rows can be viewed as JSON and back again. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
     <p>List calls can return one page or walk every page. Fetch-all follows the HAL <code>_links.next</code> link when Subsplash sends one. When the operation uses page numbers and there is no next link, further pages are requested until the page is short, <code>total</code> is reached, a page repeats, or the page cap is hit. A merged collection reports <code>count</code> as the number of combined resources. <code>subsplash.truncated</code> is true when the cap stopped the walk early.</p>
     <p>Set <code>output</code> to <code>items</code> when the next node wants the embedded array instead of the collection envelope. Other message properties are left in place.</p>
     <p>API failures call <code>done(err)</code>. Node-RED then reports the error with the message attached, so a Catch node receives <code>msg.statusCode</code>, the error body on <code>msg.payload</code>, and <code>msg.subsplash.error.code</code> (for example <code>resource_not_found</code> or <code>too_many_requests</code>).</p>
@@ -805,9 +805,9 @@ DIALOG = """
         <label for="subsplash-filters-list"><i class="fa fa-filter"></i> Filters</label>
         <input type="hidden" id="node-input-filters">
         <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-filters-mode" class="red-ui-button">JSON</button>
             <ol id="subsplash-filters-list"></ol>
-            <textarea id="subsplash-filters-json" rows="4" style="display:none; width:100%;"></textarea>
+            <textarea id="subsplash-filters-json" class="subsplash-json" rows="4" style="display:none; width:100%;"></textarea>
+            <button type="button" id="subsplash-filters-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
             <div class="form-tips">Keys and values come from this operation. Custom keys are allowed. JSON keeps the object that older flows saved.</div>
         </div>
     </div>
@@ -834,28 +834,35 @@ DIALOG = """
         <label for="subsplash-fields-list"><i class="fa fa-list"></i> Fields</label>
         <input type="hidden" id="node-input-fields">
         <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-fields-mode" class="red-ui-button">JSON</button>
             <ol id="subsplash-fields-list"></ol>
-            <textarea id="subsplash-fields-json" rows="3" style="display:none; width:100%;"></textarea>
+            <textarea id="subsplash-fields-json" class="subsplash-json" rows="3" style="display:none; width:100%;"></textarea>
+            <button type="button" id="subsplash-fields-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
         </div>
     </div>
-    <div class="form-row">
-        <label for="subsplash-query-list"><i class="fa fa-question"></i> Query</label>
-        <input type="hidden" id="node-input-query">
-        <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-query-mode" class="red-ui-button">JSON</button>
-            <ol id="subsplash-query-list"></ol>
-            <textarea id="subsplash-query-json" rows="3" style="display:none; width:100%;"></textarea>
-            <div class="form-tips">Escape hatch for any query parameter, including ones added to the API later.</div>
-        </div>
-    </div>
-    <div class="form-row">
-        <label for="subsplash-headers-list"><i class="fa fa-header"></i> Headers</label>
-        <input type="hidden" id="node-input-headers">
-        <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-headers-mode" class="red-ui-button">JSON</button>
-            <ol id="subsplash-headers-list"></ol>
-            <textarea id="subsplash-headers-json" rows="3" style="display:none; width:100%;"></textarea>
+    <div class="subsplash-extras-divider"></div>
+    <div class="subsplash-extras">
+        <button type="button" id="subsplash-extras-toggle" class="red-ui-button red-ui-button-small subsplash-extras-toggle" aria-expanded="false">
+            <i id="subsplash-extras-caret" class="fa fa-caret-right"></i> Add Extras
+        </button>
+        <div id="subsplash-extras-panel" style="display:none;">
+            <div class="form-row">
+                <label for="subsplash-query-list"><i class="fa fa-question"></i> Query</label>
+                <input type="hidden" id="node-input-query">
+                <div style="width:70%; display:inline-block; vertical-align:top;">
+                    <ol id="subsplash-query-list"></ol>
+                    <textarea id="subsplash-query-json" class="subsplash-json" rows="3" style="display:none; width:100%;"></textarea>
+                    <button type="button" id="subsplash-query-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="subsplash-headers-list"><i class="fa fa-header"></i> Headers</label>
+                <input type="hidden" id="node-input-headers">
+                <div style="width:70%; display:inline-block; vertical-align:top;">
+                    <ol id="subsplash-headers-list"></ol>
+                    <textarea id="subsplash-headers-json" class="subsplash-json" rows="3" style="display:none; width:100%;"></textarea>
+                    <button type="button" id="subsplash-headers-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-row subsplash-page">
@@ -1052,21 +1059,12 @@ REQUEST_NODE = r"""<script type="text/javascript">
         </div>
     </div>
     <div class="form-row">
-        <label for="subsplash-query-list"><i class="fa fa-question"></i> Query</label>
-        <input type="hidden" id="node-input-query">
-        <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-query-mode" class="red-ui-button">JSON</button>
-            <ol id="subsplash-query-list"></ol>
-            <textarea id="subsplash-query-json" rows="3" style="display:none; width:100%;"></textarea>
-        </div>
-    </div>
-    <div class="form-row">
         <label for="subsplash-filters-list"><i class="fa fa-filter"></i> Filters</label>
         <input type="hidden" id="node-input-filters">
         <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-filters-mode" class="red-ui-button">JSON</button>
             <ol id="subsplash-filters-list"></ol>
-            <textarea id="subsplash-filters-json" rows="4" style="display:none; width:100%;"></textarea>
+            <textarea id="subsplash-filters-json" class="subsplash-json" rows="4" style="display:none; width:100%;"></textarea>
+            <button type="button" id="subsplash-filters-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
         </div>
     </div>
     <div class="form-row">
@@ -1089,18 +1087,35 @@ REQUEST_NODE = r"""<script type="text/javascript">
         <label for="subsplash-fields-list"><i class="fa fa-list"></i> Fields</label>
         <input type="hidden" id="node-input-fields">
         <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-fields-mode" class="red-ui-button">JSON</button>
             <ol id="subsplash-fields-list"></ol>
-            <textarea id="subsplash-fields-json" rows="3" style="display:none; width:100%;"></textarea>
+            <textarea id="subsplash-fields-json" class="subsplash-json" rows="3" style="display:none; width:100%;"></textarea>
+            <button type="button" id="subsplash-fields-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
         </div>
     </div>
-    <div class="form-row">
-        <label for="subsplash-headers-list"><i class="fa fa-header"></i> Headers</label>
-        <input type="hidden" id="node-input-headers">
-        <div style="width:70%; display:inline-block; vertical-align:top;">
-            <button type="button" id="subsplash-headers-mode" class="red-ui-button">JSON</button>
-            <ol id="subsplash-headers-list"></ol>
-            <textarea id="subsplash-headers-json" rows="3" style="display:none; width:100%;"></textarea>
+    <div class="subsplash-extras-divider"></div>
+    <div class="subsplash-extras">
+        <button type="button" id="subsplash-extras-toggle" class="red-ui-button red-ui-button-small subsplash-extras-toggle" aria-expanded="false">
+            <i id="subsplash-extras-caret" class="fa fa-caret-right"></i> Add Extras
+        </button>
+        <div id="subsplash-extras-panel" style="display:none;">
+            <div class="form-row">
+                <label for="subsplash-query-list"><i class="fa fa-question"></i> Query</label>
+                <input type="hidden" id="node-input-query">
+                <div style="width:70%; display:inline-block; vertical-align:top;">
+                    <ol id="subsplash-query-list"></ol>
+                    <textarea id="subsplash-query-json" class="subsplash-json" rows="3" style="display:none; width:100%;"></textarea>
+                    <button type="button" id="subsplash-query-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="subsplash-headers-list"><i class="fa fa-header"></i> Headers</label>
+                <input type="hidden" id="node-input-headers">
+                <div style="width:70%; display:inline-block; vertical-align:top;">
+                    <ol id="subsplash-headers-list"></ol>
+                    <textarea id="subsplash-headers-json" class="subsplash-json" rows="3" style="display:none; width:100%;"></textarea>
+                    <button type="button" id="subsplash-headers-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-row">
@@ -1193,7 +1208,7 @@ REQUEST_NODE = r"""<script type="text/javascript">
         <dd>Method, path, paging metadata, and <code>error</code> when the call failed.</dd>
     </dl>
     <h3>Details</h3>
-    <p>Use this node for a path the resource nodes do not list, or when you already have a URL from a HAL <code>_links</code> object. Requests that point at a different host are rejected. Redirects are not followed. Resource ID, body, filters, include, sort, fields, query, and headers use the same controls as the resource nodes. Keys are free text here, because this node is not tied to one operation. Header names still suggest the headers named in the spec, and you can type any other name.</p>
+    <p>Use this node for a path the resource nodes do not list, or when you already have a URL from a HAL <code>_links</code> object. Requests that point at a different host are rejected. Redirects are not followed. Resource ID, body, filters, include, sort, and fields use the same controls as the resource nodes. Query and Headers are under Add Extras, which starts collapsed unless this node already has values there. Keys are free text here, because this node is not tied to one operation. Header names still suggest the headers named in the spec, and you can type any other name.</p>
     <p>The same token cache, 401 refresh, and 429 backoff as the resource nodes apply. POST, PUT, and PATCH are retried only when Subsplash returns 429.</p>
     <h3>References</h3>
     <ul>
@@ -1227,6 +1242,11 @@ def render_html(nodes, headers):
         ".subsplash-chip.selected { font-weight: 700; }",
         ".subsplash-inline { display: flex; gap: 4px; align-items: center; }",
         ".subsplash-inline select, .subsplash-inline input { width: auto; flex: 1; min-width: 0; }",
+        ".subsplash-extras-divider { border-top: 1px solid var(--red-ui-form-input-border-color, #bbb); margin: 12px 0 8px; }",
+        ".subsplash-extras-toggle { margin: 0 0 6px; }",
+        ".subsplash-list-actions { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding-top: 4px; }",
+        ".subsplash-list-actions .red-ui-editableList-addButton { margin: 0 !important; }",
+        ".subsplash-json { box-sizing: border-box; margin: 0 0 4px; }",
         "</style>",
         "<script type=\"text/javascript\">",
         "window.SUBSPLASH_EDITOR_CATALOG = " + catalog_json + ";",

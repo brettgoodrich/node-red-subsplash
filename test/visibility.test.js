@@ -262,4 +262,23 @@ test("resource dialogs can hide fields and the request node keeps them", () => {
     assert.ok(html.includes("select.on(\"change\", describe)"));
     assert.equal(html.includes("subsplash-op-filter"), false);
     assert.equal(html.includes("Filter the operation list"), false);
+    assert.equal(html.includes("Escape hatch for any query parameter, including ones added to the API later."), false);
+
+    for (const source of [donationsHtml, requestHtml]) {
+        assert.ok(source.includes("Add Extras"), "section label");
+        assert.ok(source.includes("subsplash-extras-divider"), "divider");
+        assert.ok(source.includes("subsplash-extras-panel"), "panel");
+        assert.ok(source.includes("display:none"), "collapsed markup");
+        const panelAt = source.indexOf("subsplash-extras-panel");
+        const panelEnd = source.indexOf("</div>\n    </div>\n    <div class=\"form-row", panelAt);
+        const extras = source.slice(panelAt, panelEnd === -1 ? source.length : panelEnd);
+        assert.ok(extras.includes("node-input-query"));
+        assert.ok(extras.includes("node-input-headers"));
+        assert.ok(extras.includes("View as JSON"));
+        assert.equal(extras.includes("subsplash-filters"), false);
+    }
+    assert.ok(html.includes("View as Rows"));
+    assert.ok(html.includes("savedQuery"));
+    assert.ok(html.includes("red-ui-button-small subsplash-mode"));
+    assert.ok(html.includes("listActions"));
 });

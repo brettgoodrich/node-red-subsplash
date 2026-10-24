@@ -304,6 +304,26 @@ function subsplashSetupEditor(options) {
         });
     }
 
+    function listBox(list) {
+        return $(list).parent(".red-ui-editableList-container");
+    }
+
+    function listActions(list) {
+        var box = listBox(list);
+        if (!box.length) {
+            return $();
+        }
+        var actions = box.children(".subsplash-list-actions");
+        if (!actions.length) {
+            actions = $("<div class='subsplash-list-actions'></div>").appendTo(box);
+        }
+        var add = $(list).closest(".red-ui-editableList").children(".red-ui-editableList-addButton");
+        if (add.length) {
+            actions.append(add);
+        }
+        return actions;
+    }
+
     function loadList(id, rows) {
         var list = $(id);
         list.editableList("empty");
@@ -314,17 +334,21 @@ function subsplashSetupEditor(options) {
 
     function wireMode(name, list, area, readRows, parse, serialize) {
         var mode = "rows";
+        var button = $("#subsplash-" + name + "-mode");
+        var actions = listActions(list);
+        if (actions.length) {
+            $(area).insertBefore(actions);
+            actions.append(button);
+        }
         function show(next) {
             mode = next;
-            var wrap = $(list).parent();
-            if (!wrap.hasClass("red-ui-editableList")) {
-                wrap = $(list);
-            }
-            wrap.toggle(mode === "rows");
-            $(area).toggle(mode !== "rows");
-            $("#subsplash-" + name + "-mode").text(mode === "rows" ? "JSON" : "Rows");
+            var rowsOn = mode === "rows";
+            $(list).toggle(rowsOn);
+            listBox(list).find(".red-ui-editableList-addButton").toggle(rowsOn);
+            $(area).toggle(!rowsOn);
+            button.text(rowsOn ? "View as JSON" : "View as Rows");
         }
-        $("#subsplash-" + name + "-mode").on("click", function (event) {
+        button.on("click", function (event) {
             event.preventDefault();
             if (mode === "rows") {
                 $(area).val(serialize(readRows()));
@@ -347,6 +371,16 @@ function subsplashSetupEditor(options) {
                 return serialize(readRows());
             }
         };
+    }
+
+    function setExtras(open) {
+        var panel = $("#subsplash-extras-panel");
+        if (!panel.length) {
+            return;
+        }
+        panel.toggle(!!open);
+        $("#subsplash-extras-caret").toggleClass("fa-caret-down", !!open).toggleClass("fa-caret-right", !open);
+        $("#subsplash-extras-toggle").attr("aria-expanded", open ? "true" : "false");
     }
 
     function readFilterRows() {
@@ -699,6 +733,8 @@ function subsplashSetupEditor(options) {
     setupList("#subsplash-query-list", function (row, data) { addPairRow(row, data, "query"); });
     setupList("#subsplash-headers-list", function (row, data) { addPairRow(row, data, "headers"); });
     setupList("#subsplash-body-fields", addBodyRow);
+    listActions("#subsplash-sort-list");
+    listActions("#subsplash-body-fields");
 
     wireMode("filters", "#subsplash-filters-list", "#subsplash-filters-json", readFilterRows, api.parseFilters, api.serializeFilters);
     wireMode("fields", "#subsplash-fields-list", "#subsplash-fields-json", readFieldRows, api.parseFields, api.serializeFields);
@@ -794,6 +830,9 @@ function subsplashSetupEditor(options) {
         } catch (err) {
             bodyQuiet = false;
         }
+        var savedQuery = ($("#node-input-query").val() || "").trim();
+        var savedHeaders = ($("#node-input-headers").val() || "").trim();
+        setExtras(savedQuery !== "" || savedHeaders !== "");
     }
 
     function applyPlaceholder() {
@@ -807,6 +846,11 @@ function subsplashSetupEditor(options) {
         fillDataList("#subsplash-query-names", form().queryKeys || []);
         fillDataList("#subsplash-headers-names", headerSuggestions());
     }
+
+    $("#subsplash-extras-toggle").on("click", function (event) {
+        event.preventDefault();
+        setExtras(!$("#subsplash-extras-panel").is(":visible"));
+    });
 
     loadSaved();
     applyPlaceholder();

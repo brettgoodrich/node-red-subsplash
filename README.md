@@ -98,6 +98,8 @@ The dialog still hides a field the selected operation does not declare. What you
 - **Query.** Key/value rows for any other query parameter, with the operation's query names offered as suggestions. JSON mode remains. This is the escape hatch for a parameter the other fields do not cover.
 - **Headers.** Key/value rows. The key suggests `Accept`, `Collection-Total`, `Collection-Stats`, `Cache-Control`, and `Pagination-Strategy` when the spec names them, and you can type any other header. A header the operation declares with a fixed set of values uses that list, plus Custom.
 
+Query and Headers are under **Add Extras**, below a divider and collapsed until you open it. The section opens by itself when the saved node already has a query or header value. Both fields are still there for every operation. Filters, Fields, Query, and Headers switch between rows and JSON with a small **View as JSON** / **View as Rows** button that sits with **Add** inside the row box.
+
 The request node uses these same controls with free-text keys, because it is not tied to one operation. Header names are still suggested. Date-time filters stay text fields with an RFC3339 placeholder, so a value such as `2017-05-23T15:35:57Z` is not rewritten by a local date picker.
 
 | Property | Type | Effect |
