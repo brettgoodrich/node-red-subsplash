@@ -1,6 +1,6 @@
 {
   "name": "@brettgoodrich/node-red-subsplash",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Node-RED nodes for the entire Subsplash REST API: media, people, giving, events, groups, forms, payments, push, tokens, builder, and webhooks.",
   "author": "brettgoodrich (https://github.com/brettgoodrich)",
   "license": "Apache-2.0",
