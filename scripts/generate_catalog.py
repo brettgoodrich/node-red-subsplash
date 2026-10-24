@@ -795,7 +795,7 @@ DIALOG = """
             <input type="text" id="node-input-body" placeholder="{}">
             <div class="subsplash-body-actions" style="margin-top:6px;">
                 <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
-                <button type="button" id="subsplash-body-clear" class="red-ui-button red-ui-button-small">Clear all fields</button>
+                <button type="button" id="subsplash-body-clear" class="red-ui-button"><span class="subsplash-clear-rest">Clear all fields</span><span class="subsplash-clear-confirm">Are you sure?</span></button>
                 <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
             </div>
             <div class="form-tips">JSON editor. Insert template writes writable fields from the spec, required first. Field rows edit that object. Leave empty to use msg.body or msg.payload.</div>
@@ -1054,7 +1054,7 @@ REQUEST_NODE = r"""<script type="text/javascript">
             <input type="text" id="node-input-body" placeholder="{}">
             <div class="subsplash-body-actions" style="margin-top:6px;">
                 <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
-                <button type="button" id="subsplash-body-clear" class="red-ui-button red-ui-button-small">Clear all fields</button>
+                <button type="button" id="subsplash-body-clear" class="red-ui-button"><span class="subsplash-clear-rest">Clear all fields</span><span class="subsplash-clear-confirm">Are you sure?</span></button>
                 <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
             </div>
             <ol id="subsplash-body-fields" style="margin-top:6px;"></ol>
@@ -1250,6 +1250,11 @@ def render_html(nodes, headers):
         ".subsplash-list-actions .red-ui-editableList-addButton { margin: 0 !important; }",
         ".subsplash-body-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }",
         "button.red-ui-button.subsplash-danger { color: #fff !important; background: #c9302c; border-color: #ac2925; }",
+        "button#subsplash-body-clear { display: inline-grid; grid-template: 1fr / 1fr; align-items: center; justify-items: center; }",
+        "button#subsplash-body-clear > span { grid-area: 1 / 1; }",
+        "button#subsplash-body-clear .subsplash-clear-confirm { visibility: hidden; }",
+        "button#subsplash-body-clear.subsplash-danger .subsplash-clear-rest { visibility: hidden; }",
+        "button#subsplash-body-clear.subsplash-danger .subsplash-clear-confirm { visibility: visible; }",
         ".subsplash-json { box-sizing: border-box; margin: 0 0 4px; }",
         "</style>",
         "<script type=\"text/javascript\">",

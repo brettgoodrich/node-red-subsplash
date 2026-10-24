@@ -294,5 +294,12 @@ test("resource dialogs can hide fields and the request node keeps them", () => {
         assert.ok(templateAt !== -1 && clearAt > templateAt);
         assert.ok(source.includes("Clear all fields"));
         assert.ok(source.includes("red-ui-button-small"));
+        const clearTag = source.slice(source.lastIndexOf("<button", clearAt), source.indexOf("</button>", clearAt));
+        assert.ok(clearTag.includes('class="red-ui-button"'));
+        assert.equal(clearTag.includes("red-ui-button-small"), false);
+        assert.ok(clearTag.includes("subsplash-clear-rest"));
+        assert.ok(clearTag.includes("subsplash-clear-confirm"));
+        assert.ok(clearTag.includes("Are you sure?"));
     }
+    assert.ok(html.includes("grid-area: 1 / 1"));
 });

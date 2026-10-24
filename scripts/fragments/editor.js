@@ -776,13 +776,13 @@ function subsplashSetupEditor(options) {
         }
         clearButton.data("armed", !!armed);
         if (armed) {
-            clearButton.text("Are you sure?").addClass("subsplash-danger");
+            clearButton.addClass("subsplash-danger");
             clearTimer = setTimeout(function () {
                 armClear(false);
             }, 4000);
             return;
         }
-        clearButton.text("Clear all fields").removeClass("subsplash-danger");
+        clearButton.removeClass("subsplash-danger");
     }
     function clearBody() {
         bodyQuiet = true;
