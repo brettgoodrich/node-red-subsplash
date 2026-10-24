@@ -300,6 +300,12 @@ test("resource dialogs can hide fields and the request node keeps them", () => {
         assert.ok(clearTag.includes("subsplash-clear-rest"));
         assert.ok(clearTag.includes("subsplash-clear-confirm"));
         assert.ok(clearTag.includes("Are you sure?"));
+        assert.equal(source.includes("subsplash-body-reload"), false);
+        assert.ok(source.includes("subsplash-body-mode"));
     }
     assert.ok(html.includes("grid-area: 1 / 1"));
+    assert.equal(html.includes("Reload fields"), false);
+    assert.ok(html.includes("Couldn't load this JSON into rows. Switch back to View as JSON to fix it."));
+    assert.ok(html.includes("subsplash-json-error"));
+    assert.ok(html.includes("showUnloaded"));
 });

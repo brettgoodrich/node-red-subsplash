@@ -747,7 +747,7 @@ def render_help(node):
 {shared_inputs()}
 <h3>Details</h3>
     <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. Operations are grouped by their spec tag. The editor shows Resource ID, Body, Filters, Include, Sort, Fields, paging, Total, and Accept only when the selected operation declares them. Query, Headers, and Output stay available on every operation. A value saved in a hidden field is not sent. A property on the message is still sent, and it replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
-    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor. Insert template writes the writable body fields from the spec, required first, and the field rows edit that same object. Clear all fields asks you to click again, then empties those rows and the JSON. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and Headers stay available on every operation. They sit under Add Extras, which starts collapsed and opens when the node already has a query or header value. Rows can be viewed as JSON and back again. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
+    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor or field rows for the same object. Insert template writes the writable body fields from the spec, required first. Clear all fields asks you to click again, then empties those rows and the JSON. View as Rows loads the JSON into the rows. If that JSON cannot be loaded, it is left as typed and the section shows an error instead of replacing the rows. Switch back to View as JSON to fix it. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and Headers stay available on every operation. They sit under Add Extras, which starts collapsed and opens when the node already has a query or header value. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
     <p>List calls can return one page or walk every page. Fetch-all follows the HAL <code>_links.next</code> link when Subsplash sends one. When the operation uses page numbers and there is no next link, further pages are requested until the page is short, <code>total</code> is reached, a page repeats, or the page cap is hit. A merged collection reports <code>count</code> as the number of combined resources. <code>subsplash.truncated</code> is true when the cap stopped the walk early.</p>
     <p>Set <code>output</code> to <code>items</code> when the next node wants the embedded array instead of the collection envelope. Other message properties are left in place.</p>
     <p>API failures call <code>done(err)</code>. Node-RED then reports the error with the message attached, so a Catch node receives <code>msg.statusCode</code>, the error body on <code>msg.payload</code>, and <code>msg.subsplash.error.code</code> (for example <code>resource_not_found</code> or <code>too_many_requests</code>).</p>
@@ -796,10 +796,10 @@ DIALOG = """
             <div class="subsplash-body-actions" style="margin-top:6px;">
                 <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
                 <button type="button" id="subsplash-body-clear" class="red-ui-button"><span class="subsplash-clear-rest">Clear all fields</span><span class="subsplash-clear-confirm">Are you sure?</span></button>
-                <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
             </div>
-            <div class="form-tips">JSON editor. Insert template writes writable fields from the spec, required first. Field rows edit that object. Leave empty to use msg.body or msg.payload.</div>
+            <div class="form-tips">JSON or field rows for the same object. Insert template writes writable fields from the spec, required first. View as Rows loads the JSON into the rows. Leave empty to use msg.body or msg.payload.</div>
             <ol id="subsplash-body-fields" style="margin-top:6px;"></ol>
+            <button type="button" id="subsplash-body-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
         </div>
     </div>
     <div class="form-row subsplash-filters">
@@ -1055,9 +1055,9 @@ REQUEST_NODE = r"""<script type="text/javascript">
             <div class="subsplash-body-actions" style="margin-top:6px;">
                 <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
                 <button type="button" id="subsplash-body-clear" class="red-ui-button"><span class="subsplash-clear-rest">Clear all fields</span><span class="subsplash-clear-confirm">Are you sure?</span></button>
-                <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
             </div>
             <ol id="subsplash-body-fields" style="margin-top:6px;"></ol>
+            <button type="button" id="subsplash-body-mode" class="red-ui-button red-ui-button-small subsplash-mode">View as JSON</button>
         </div>
     </div>
     <div class="form-row">
@@ -1256,6 +1256,7 @@ def render_html(nodes, headers):
         "button#subsplash-body-clear.subsplash-danger .subsplash-clear-rest { visibility: hidden; }",
         "button#subsplash-body-clear.subsplash-danger .subsplash-clear-confirm { visibility: visible; }",
         ".subsplash-json { box-sizing: border-box; margin: 0 0 4px; }",
+        ".subsplash-json-error { color: #c9302c; margin: 0 0 6px; font-size: 12px; line-height: 1.4; }",
         "</style>",
         "<script type=\"text/javascript\">",
         "window.SUBSPLASH_EDITOR_CATALOG = " + catalog_json + ";",

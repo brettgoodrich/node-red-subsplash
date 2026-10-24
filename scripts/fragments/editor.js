@@ -332,41 +332,111 @@ function subsplashSetupEditor(options) {
         });
     }
 
-    function wireMode(name, list, area, readRows, parse, serialize) {
+    var JSON_ROW_ERROR = "Couldn't load this JSON into rows. Switch back to View as JSON to fix it.";
+
+    function wireMode(name, list, area, readRows, parse, serialize, io) {
         var mode = "rows";
+        var holdJson = false;
+        var keepText = io && io.keepText;
         var button = $("#subsplash-" + name + "-mode");
         var actions = listActions(list);
         if (actions.length) {
-            $(area).insertBefore(actions);
+            if (area && !keepText) {
+                $(area).insertBefore(actions);
+            }
             actions.append(button);
         }
+        var error = $("<div class='subsplash-json-error' role='alert'></div>").hide();
+        if (actions.length) {
+            actions.before(error);
+        }
+        function readText() {
+            if (io && io.read) {
+                return io.read();
+            }
+            return $(area).val();
+        }
+        function writeText(text) {
+            if (io && io.write) {
+                io.write(text);
+                return;
+            }
+            $(area).val(text);
+        }
+        function hideJson(hidden) {
+            if (io && io.hide) {
+                io.hide(hidden);
+                return;
+            }
+            $(area).toggle(!hidden);
+        }
+        function showError(on) {
+            error.text(on ? JSON_ROW_ERROR : "");
+            error.toggle(!!on);
+        }
         function show(next) {
+            holdJson = false;
             mode = next;
             var rowsOn = mode === "rows";
             $(list).toggle(rowsOn);
             listBox(list).find(".red-ui-editableList-addButton").toggle(rowsOn);
-            $(area).toggle(!rowsOn);
+            hideJson(rowsOn);
             button.text(rowsOn ? "View as JSON" : "View as Rows");
+            showError(false);
+        }
+        function showUnloaded() {
+            holdJson = true;
+            mode = "json";
+            $(list).hide();
+            listBox(list).find(".red-ui-editableList-addButton").hide();
+            hideJson(true);
+            button.text("View as JSON");
+            showError(true);
         }
         button.on("click", function (event) {
             event.preventDefault();
-            if (mode === "rows") {
-                $(area).val(serialize(readRows()));
+            if (holdJson) {
                 show("json");
                 return;
             }
-            var parsed = parse($(area).val());
-            if (parsed.mode !== "rows") {
+            if (mode === "rows") {
+                if (!keepText) {
+                    writeText(serialize(readRows()));
+                }
+                show("json");
                 return;
             }
+            var parsed = parse(readText());
+            if (!parsed || parsed.mode !== "rows") {
+                showUnloaded();
+                return;
+            }
+            if (io && io.beforeLoad) {
+                io.beforeLoad();
+            }
             loadList(list, parsed.rows);
+            if (io && io.afterLoad) {
+                io.afterLoad();
+            }
             show("rows");
         });
+        if (area && !keepText) {
+            $(area).on("input", function () {
+                if (holdJson || mode !== "json") {
+                    return;
+                }
+                var parsed = parse(readText());
+                if (parsed && parsed.mode === "rows") {
+                    showError(false);
+                }
+            });
+        }
         modes[name] = {
             show: show,
+            holding: function () { return holdJson; },
             save: function () {
-                if (mode === "json") {
-                    return ($(area).val() || "").trim();
+                if (mode === "json" || holdJson) {
+                    return (readText() || "").trim();
                 }
                 return serialize(readRows());
             }
@@ -670,6 +740,23 @@ function subsplashSetupEditor(options) {
         });
     }
 
+    function parseBody(raw) {
+        var text = raw === undefined || raw === null ? "" : String(raw);
+        if (!text.trim()) {
+            return { mode: "rows", rows: [] };
+        }
+        var value;
+        try {
+            value = JSON.parse(text);
+        } catch (err) {
+            return { mode: "json", rows: [] };
+        }
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+            return { mode: "json", rows: [] };
+        }
+        return { mode: "rows", rows: rowsFromObject(value) };
+    }
+
     function rowsFromObject(obj) {
         return Object.keys(obj || {}).map(function (key) {
             var value = obj[key];
@@ -744,6 +831,26 @@ function subsplashSetupEditor(options) {
     wireMode("headers", "#subsplash-headers-list", "#subsplash-headers-json", function () {
         return readPairRows("#subsplash-headers-list .subsplash-headers-row");
     }, api.parsePairs, api.serializePairs);
+    wireMode("body", "#subsplash-body-fields", null, readBodyRows, parseBody, function () {
+        return "";
+    }, {
+        keepText: true,
+        read: function () {
+            return $("#node-input-body").typedInput("value") || "";
+        },
+        write: function (text) {
+            setBody(text);
+        },
+        hide: function (hidden) {
+            $("#node-input-body").next(".red-ui-typedInput-container").toggle(!hidden);
+        },
+        beforeLoad: function () {
+            bodyQuiet = true;
+        },
+        afterLoad: function () {
+            bodyQuiet = false;
+        }
+    });
 
     $("#subsplash-include-add").on("click", function (event) {
         event.preventDefault();
@@ -766,6 +873,7 @@ function subsplashSetupEditor(options) {
         loadList("#subsplash-body-fields", rowsFromObject(obj));
         bodyQuiet = false;
         setBody(JSON.stringify(obj, null, 2));
+        modes.body.show("rows");
     });
     var clearButton = $("#subsplash-body-clear");
     var clearTimer = null;
@@ -789,6 +897,9 @@ function subsplashSetupEditor(options) {
         loadList("#subsplash-body-fields", []);
         bodyQuiet = false;
         setBody("");
+        if (modes.body.holding()) {
+            modes.body.show("rows");
+        }
     }
     clearButton.on("click", function (event) {
         event.preventDefault();
@@ -816,23 +927,6 @@ function subsplashSetupEditor(options) {
         }
         armClear(false);
     });
-    $("#subsplash-body-reload").on("click", function (event) {
-        event.preventDefault();
-        var raw = $("#node-input-body").typedInput("value");
-        var parsed;
-        try {
-            parsed = raw && String(raw).trim() ? JSON.parse(raw) : {};
-        } catch (err) {
-            return;
-        }
-        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-            return;
-        }
-        bodyQuiet = true;
-        loadList("#subsplash-body-fields", rowsFromObject(parsed));
-        bodyQuiet = false;
-    });
-
     function loadSaved() {
         var filters = api.parseFilters($("#node-input-filters").val());
         if (filters.mode === "json") {
@@ -868,16 +962,14 @@ function subsplashSetupEditor(options) {
             loadList("#subsplash-headers-list", headers.rows);
             modes.headers.show("rows");
         }
-        var bodyRaw = $("#node-input-body").typedInput("value");
-        try {
-            var body = bodyRaw && String(bodyRaw).trim() ? JSON.parse(bodyRaw) : null;
-            if (body && typeof body === "object" && !Array.isArray(body)) {
-                bodyQuiet = true;
-                loadList("#subsplash-body-fields", rowsFromObject(body));
-                bodyQuiet = false;
-            }
-        } catch (err) {
+        var body = parseBody($("#node-input-body").typedInput("value"));
+        if (body.mode === "rows") {
+            bodyQuiet = true;
+            loadList("#subsplash-body-fields", body.rows);
             bodyQuiet = false;
+            modes.body.show("rows");
+        } else {
+            modes.body.show("json");
         }
         var savedQuery = ($("#node-input-query").val() || "").trim();
         var savedHeaders = ($("#node-input-headers").val() || "").trim();

@@ -11,17 +11,34 @@ const catalog = require("../lib/catalog.json");
 const root = path.join(__dirname, "..");
 const readme = fs.readFileSync(path.join(root, "README.md"), "utf8");
 const html = fs.readFileSync(path.join(root, "nodes", "subsplash.html"), "utf8");
-const fixture = fs.readFileSync(path.join(__dirname, "fixtures", "operations.txt"), "utf8").trim().split("\n");
 
-test("README maps every locked operation", () => {
-    for (const line of fixture) {
-        const [method, opPath, operationId] = line.split(" ");
-        assert.ok(readme.includes("`" + method + "`"), method);
-        assert.ok(readme.includes("`" + opPath + "`"), opPath);
-        assert.ok(readme.includes("`" + operationId + "`"), operationId);
+test("README lists the nodes and leaves the API catalog in the spec", () => {
+    assert.match(readme, /Implements the \[Subsplash API\]\(https:\/\/developer\.subsplash\.com\/docs\/restapi\/\) as Node-RED nodes:/);
+    for (const type of [
+        "subsplash-config",
+        "subsplash-builder",
+        "subsplash-donations",
+        "subsplash-events",
+        "subsplash-forms",
+        "subsplash-groups",
+        "subsplash-live",
+        "subsplash-media",
+        "subsplash-pages",
+        "subsplash-payments",
+        "subsplash-people",
+        "subsplash-push",
+        "subsplash-tokens",
+        "subsplash-webhooks",
+        "subsplash-request"
+    ]) {
+        assert.ok(readme.includes("`" + type + "`"), type);
     }
-    assert.ok(readme.includes("subsplash-request"));
-    assert.ok(readme.includes("subsplash-config"));
+    assert.equal(readme.includes("GENERATED:OPERATIONS"), false);
+    assert.equal(readme.includes("GENERATED:COVERAGE"), false);
+    assert.equal(readme.includes("`GET /builder/v1/list-rows`"), false);
+    assert.ok(readme.includes("npm install @brettgoodrich/node-red-subsplash"));
+    assert.ok(readme.includes("client_credentials"));
+    assert.ok(readme.includes("Apache-2.0"));
 });
 
 function readEditorCatalog(source) {
