@@ -281,4 +281,18 @@ test("resource dialogs can hide fields and the request node keeps them", () => {
     assert.ok(html.includes("savedQuery"));
     assert.ok(html.includes("red-ui-button-small subsplash-mode"));
     assert.ok(html.includes("listActions"));
+    assert.ok(html.includes("Are you sure?"));
+    assert.ok(html.includes("subsplash-danger"));
+    assert.ok(html.includes("mousedown.subsplashBodyClear"));
+    const clearCount = html.split('id="subsplash-body-clear"').length - 1;
+    const templateCount = html.split('id="subsplash-body-template"').length - 1;
+    assert.equal(clearCount, templateCount);
+    assert.ok(clearCount >= 14);
+    for (const source of [donationsHtml, requestHtml]) {
+        const templateAt = source.indexOf("subsplash-body-template");
+        const clearAt = source.indexOf("subsplash-body-clear");
+        assert.ok(templateAt !== -1 && clearAt > templateAt);
+        assert.ok(source.includes("Clear all fields"));
+        assert.ok(source.includes("red-ui-button-small"));
+    }
 });

@@ -767,6 +767,55 @@ function subsplashSetupEditor(options) {
         bodyQuiet = false;
         setBody(JSON.stringify(obj, null, 2));
     });
+    var clearButton = $("#subsplash-body-clear");
+    var clearTimer = null;
+    function armClear(armed) {
+        if (clearTimer) {
+            clearTimeout(clearTimer);
+            clearTimer = null;
+        }
+        clearButton.data("armed", !!armed);
+        if (armed) {
+            clearButton.text("Are you sure?").addClass("subsplash-danger");
+            clearTimer = setTimeout(function () {
+                armClear(false);
+            }, 4000);
+            return;
+        }
+        clearButton.text("Clear all fields").removeClass("subsplash-danger");
+    }
+    function clearBody() {
+        bodyQuiet = true;
+        loadList("#subsplash-body-fields", []);
+        bodyQuiet = false;
+        setBody("");
+    }
+    clearButton.on("click", function (event) {
+        event.preventDefault();
+        if (!clearButton.data("armed")) {
+            armClear(true);
+            return;
+        }
+        armClear(false);
+        clearBody();
+    });
+    clearButton.on("blur", function () {
+        setTimeout(function () {
+            if (!clearButton.data("armed") || document.activeElement === clearButton[0]) {
+                return;
+            }
+            armClear(false);
+        }, 0);
+    });
+    $(document).off("mousedown.subsplashBodyClear").on("mousedown.subsplashBodyClear", function (event) {
+        if (!clearButton.data("armed")) {
+            return;
+        }
+        if (clearButton.is(event.target) || clearButton.has(event.target).length) {
+            return;
+        }
+        armClear(false);
+    });
     $("#subsplash-body-reload").on("click", function (event) {
         event.preventDefault();
         var raw = $("#node-input-body").typedInput("value");

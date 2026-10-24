@@ -747,7 +747,7 @@ def render_help(node):
 {shared_inputs()}
 <h3>Details</h3>
     <p>Choose an operation in the node, or set <code>msg.operation</code> to one of the ids below. Operations are grouped by their spec tag. The editor shows Resource ID, Body, Filters, Include, Sort, Fields, paging, Total, and Accept only when the selected operation declares them. Query, Headers, and Output stay available on every operation. A value saved in a hidden field is not sent. A property on the message is still sent, and it replaces the same editor field. Filters, query, and headers are merged, and the message value wins for a key that appears in both.</p>
-    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor. Insert template writes the writable body fields from the spec, required first, and the field rows edit that same object. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and Headers stay available on every operation. They sit under Add Extras, which starts collapsed and opens when the node already has a query or header value. Rows can be viewed as JSON and back again. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
+    <p>Resource ID can be typed, or taken from the message, flow, global context, or an environment variable. <code>msg.resourceId</code> still wins when it is set. Body uses the JSON editor. Insert template writes the writable body fields from the spec, required first, and the field rows edit that same object. Clear all fields asks you to click again, then empties those rows and the JSON. Filters, sort, and sparse fieldsets offer the values declared for the operation plus a custom entry. Include is a set of those values plus any you add. Query and Headers stay available on every operation. They sit under Add Extras, which starts collapsed and opens when the node already has a query or header value. Rows can be viewed as JSON and back again. What gets saved is the same text or JSON an older flow already used, so opening a node does not change the request until you save.</p>
     <p>List calls can return one page or walk every page. Fetch-all follows the HAL <code>_links.next</code> link when Subsplash sends one. When the operation uses page numbers and there is no next link, further pages are requested until the page is short, <code>total</code> is reached, a page repeats, or the page cap is hit. A merged collection reports <code>count</code> as the number of combined resources. <code>subsplash.truncated</code> is true when the cap stopped the walk early.</p>
     <p>Set <code>output</code> to <code>items</code> when the next node wants the embedded array instead of the collection envelope. Other message properties are left in place.</p>
     <p>API failures call <code>done(err)</code>. Node-RED then reports the error with the message attached, so a Catch node receives <code>msg.statusCode</code>, the error body on <code>msg.payload</code>, and <code>msg.subsplash.error.code</code> (for example <code>resource_not_found</code> or <code>too_many_requests</code>).</p>
@@ -793,8 +793,9 @@ DIALOG = """
         <label for="node-input-body"><i class="fa fa-file-code-o"></i> Body</label>
         <div style="width:70%; display:inline-block; vertical-align:top;">
             <input type="text" id="node-input-body" placeholder="{}">
-            <div style="margin-top:6px;">
+            <div class="subsplash-body-actions" style="margin-top:6px;">
                 <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
+                <button type="button" id="subsplash-body-clear" class="red-ui-button red-ui-button-small">Clear all fields</button>
                 <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
             </div>
             <div class="form-tips">JSON editor. Insert template writes writable fields from the spec, required first. Field rows edit that object. Leave empty to use msg.body or msg.payload.</div>
@@ -1051,8 +1052,9 @@ REQUEST_NODE = r"""<script type="text/javascript">
         <label for="node-input-body"><i class="fa fa-file-code-o"></i> Body</label>
         <div style="width:70%; display:inline-block; vertical-align:top;">
             <input type="text" id="node-input-body" placeholder="{}">
-            <div style="margin-top:6px;">
+            <div class="subsplash-body-actions" style="margin-top:6px;">
                 <button type="button" id="subsplash-body-template" class="red-ui-button">Insert template</button>
+                <button type="button" id="subsplash-body-clear" class="red-ui-button red-ui-button-small">Clear all fields</button>
                 <button type="button" id="subsplash-body-reload" class="red-ui-button">Reload fields</button>
             </div>
             <ol id="subsplash-body-fields" style="margin-top:6px;"></ol>
@@ -1246,6 +1248,8 @@ def render_html(nodes, headers):
         ".subsplash-extras-toggle { margin: 0 0 6px; }",
         ".subsplash-list-actions { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding-top: 4px; }",
         ".subsplash-list-actions .red-ui-editableList-addButton { margin: 0 !important; }",
+        ".subsplash-body-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }",
+        "button.red-ui-button.subsplash-danger { color: #fff !important; background: #c9302c; border-color: #ac2925; }",
         ".subsplash-json { box-sizing: border-box; margin: 0 0 4px; }",
         "</style>",
         "<script type=\"text/javascript\">",
